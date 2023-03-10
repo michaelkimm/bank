@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/bank
+    username: root
+    password: root
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: update
+#    show-sql: true
+    properties:
+      hibernate.format_sql: true
+      dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false

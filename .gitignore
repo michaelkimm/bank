@@ -33,6 +33,5 @@ out/
 /nbdist/
 /.nb-gradle/
 
-*.rar
 ### VS Code ###
 .vscode/

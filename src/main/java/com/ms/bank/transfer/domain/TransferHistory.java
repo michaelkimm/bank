@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -63,7 +60,8 @@ public class TransferHistory {
     @Column(length = 40, unique = true)
     String publicTransferId;
 
-    @Column
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
     TransferState state;
 
     @Getter

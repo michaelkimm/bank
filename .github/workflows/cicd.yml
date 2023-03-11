@@ -40,7 +40,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '11'
-          distribution: 'termurin'
+          distribution: 'temurin'
       - name: Grant Execute permission for gradlew
         run: chmod +x gradlex
         shell: bash

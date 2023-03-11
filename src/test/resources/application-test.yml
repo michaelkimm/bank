@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:mydb
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+      properties:
+        hibernate.format_sql: true
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+  jackson:
+    serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false

@@ -59,3 +59,16 @@ jobs:
           docker build -t ${{ secrets.APP_NAME }} .
           docker image tag ${{ secrets.APP_NAME }} ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
           docker push ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+      - name: connect ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOYMENT_HOST }}
+          username: ${{ secrets.DEPLOYMENT_USERNAME }}
+          password: ${{ secrets.DEPLOYMENT_PASSWORD }}
+          port: ${{ secrets.DEPLOYMENT_PORT }}
+          script: |
+            docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+            docker stop ${{ secrets.APP_NAME }}
+            docker rm ${{ secrets.APP_NAME }}
+            docker run --name ${{ secrets.APP_NAME }} -d -p 8080:80 ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+            docker image prune -f

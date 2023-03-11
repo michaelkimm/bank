@@ -42,7 +42,7 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
       - name: Grant Execute permission for gradlew
-        run: chmod +x gradlex
+        run: chmod +x gradlew
         shell: bash
       - name: Build with Gradle
         run: ./gradlew build -x test

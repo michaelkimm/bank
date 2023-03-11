@@ -48,11 +48,11 @@ jobs:
         run: ./gradlew build -x test
         shell: bash
       - name: Login to NCP Container Registry
-          uses: docker/login-action@v2
-          with:
-            registry: ${{ secrets.NCP_CONTAINER_REGISTRY }}
-            username: ${{ secrets.NCP_ACCESS_KEY }}
-            password: ${{ secrets.NCP_SECRET_KEY }}
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.NCP_CONTAINER_REGISTRY }}
+          username: ${{ secrets.NCP_ACCESS_KEY }}
+          password: ${{ secrets.NCP_SECRET_KEY }}
       - name: Docker build & push
         if: contains(github.ref, 'main')
         run: |

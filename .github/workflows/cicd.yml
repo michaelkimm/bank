@@ -57,5 +57,5 @@ jobs:
         if: contains(github.ref, 'main')
         run: |
           docker build -t ${{ secrets.APP_NAME }} .
-          docker image tag ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+          docker image tag ${{ secrets.APP_NAME }} ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
           docker push ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}

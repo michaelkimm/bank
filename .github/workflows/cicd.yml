@@ -28,7 +28,7 @@ jobs:
         shell: bash
       # local환경으로 테세트 진행
       - name: Test with Gradle
-        run: SPRING_PROFILES_ACTIVE=[local] ./grdlew clean test
+        run: SPRING_PROFILES_ACTIVE=[local] ./gradlew clean test
         shell: bash
 
   CD:

@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '11'
-          distritubtion: 'temurin'
+          distribution: 'temurin'
       # Gradle 권한 부여
       - name: Grant Execute permission for gradlew
         run: chmod +x gradlew

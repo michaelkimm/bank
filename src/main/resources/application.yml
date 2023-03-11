@@ -10,8 +10,9 @@ spring:
     hibernate:
       ddl-auto: none
     properties:
-      hibernate.format_sql: true
-      dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
     show-sql: true
 
   jackson:

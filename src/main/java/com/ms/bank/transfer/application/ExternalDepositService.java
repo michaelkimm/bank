@@ -105,7 +105,6 @@ public class ExternalDepositService {
                 externalDepositRequestDto.getAmountAfterDeposit(),
                 externalDepositRequestDto.getMemoToReceiver(),
                 externalDepositRequestDto.getTransferAmount(),
-                externalDepositRequestDto.getCreateTime(),
                 externalDepositRequestDto.getPublicTransferId(),
                 TransferState.FINISHED
         );

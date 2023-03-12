@@ -12,11 +12,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @Entity
-public class TransferHistory {
+public class TransferHistory extends BaseEntity{
 
     @EmbeddedId
     private DateAndGUID dateAndGUID;
@@ -54,9 +53,6 @@ public class TransferHistory {
     @Column
     BigDecimal transferAmount;
 
-    @Column
-    LocalDateTime createTime;
-
     @Column(length = 40, unique = true)
     String publicTransferId;
 
@@ -75,6 +71,36 @@ public class TransferHistory {
 
         @Column
         private String guid;
+    }
+
+    public TransferHistory(DateAndGUID dateAndGUID,
+                           String withdrawalBankId,
+                           String withdrawalAccountNumber,
+                           String withdrawalMemberName,
+                           BigDecimal amountAfterWithdrawal,
+                           String memoToSender,
+                           String depositBankId,
+                           String depositAccountNumber,
+                           String depositMemberName,
+                           BigDecimal amountAfterDeposit,
+                           String memoToReceiver,
+                           BigDecimal transferAmount,
+                           String publicTransferId,
+                           TransferState state) {
+        this.dateAndGUID = dateAndGUID;
+        this.withdrawalBankId = withdrawalBankId;
+        this.withdrawalAccountNumber = withdrawalAccountNumber;
+        this.withdrawalMemberName = withdrawalMemberName;
+        this.amountAfterWithdrawal = amountAfterWithdrawal;
+        this.memoToSender = memoToSender;
+        this.depositBankId = depositBankId;
+        this.depositAccountNumber = depositAccountNumber;
+        this.depositMemberName = depositMemberName;
+        this.amountAfterDeposit = amountAfterDeposit;
+        this.memoToReceiver = memoToReceiver;
+        this.transferAmount = transferAmount;
+        this.publicTransferId = publicTransferId;
+        this.state = state;
     }
 }
 

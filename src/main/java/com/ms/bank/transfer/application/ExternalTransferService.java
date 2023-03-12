@@ -99,7 +99,6 @@ public class ExternalTransferService {
                 null,
                 transferRequestDto.getMemoToReceiver(),
                 transferRequestDto.getTransferAmount(),
-                LocalDateTime.now(),
                 PublicTransferIdGenerator.getGuid(transferRequestDto.getWithdrawalBankId(), transferRequestDto.getDepositBankId(), externalTransferId),
                 TransferState.CREATED
         );

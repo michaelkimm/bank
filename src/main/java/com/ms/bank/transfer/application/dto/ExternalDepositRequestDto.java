@@ -25,7 +25,8 @@ public class ExternalDepositRequestDto {
     private BigDecimal amountAfterDeposit;
     private String memoToReceiver;
     private BigDecimal transferAmount;
-    private LocalDateTime createTime;
+    private LocalDateTime createAt;
+    private LocalDateTime updatedAt;
     private String publicTransferId;
     private TransferState state;
 
@@ -43,7 +44,8 @@ public class ExternalDepositRequestDto {
                 transferHistory.getAmountAfterDeposit(),
                 transferHistory.getMemoToReceiver(),
                 transferHistory.getTransferAmount(),
-                transferHistory.getCreateTime(),
+                transferHistory.getCreatedAt(),
+                transferHistory.getUpdatedAt(),
                 transferHistory.getPublicTransferId(),
                 transferHistory.getState()
                 );

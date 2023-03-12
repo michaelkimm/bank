@@ -33,7 +33,7 @@ public class TransferScheduler {
 
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 100)
     public void processTransferOutBoxMessage() {
 
         Optional<ExternalTransferOutBox> outbox = externalTransferOutBoxRepository.findOneForUpdate();
@@ -69,7 +69,7 @@ public class TransferScheduler {
 
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 100)
     public void processTransferDepositOutBoxMessage() {
 
         Optional<ExternalTransferDepositOutBox> outbox = externalTransferDepositOutBoxRepository.findOneForUpdate();

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class TransferScheduler {
     private final ObjectMapper objectMapper;
 
     @Transactional
-//    @Async("transferSchedulerAsyncExecutor")
+    @Async("transferSchedulerAsyncExecutor")
     @Scheduled(fixedDelay = 100)
     public void processTransferOutBoxMessage() {
 
@@ -68,7 +69,7 @@ public class TransferScheduler {
     }
 
     @Transactional
-//    @Async("transferSchedulerAsyncExecutor")
+    @Async("transferSchedulerAsyncExecutor")
     @Scheduled(fixedDelay = 100)
     public void processTransferDepositOutBoxMessage() {
 

@@ -28,7 +28,6 @@ public class TransferController {
 
     @PostMapping("/account/transfer/post")
     ResponseEntity<Void> transfer(@RequestBody TransferRequestDto transferRequestDto) {
-        log.info("transfer-post");
         transferService.execute(transferRequestDto);
         return ResponseEntity
                 .ok()

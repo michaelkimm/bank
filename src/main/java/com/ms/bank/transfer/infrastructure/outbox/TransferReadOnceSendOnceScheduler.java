@@ -7,23 +7,16 @@ import com.ms.bank.transfer.application.dto.ExternalDepositRequestDto;
 import com.ms.bank.transfer.domain.TransferHistory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class TransferScheduler {
+public class TransferReadOnceSendOnceScheduler {
 
     private final ExternalDepositService externalDepositService;
     private final ExternalTransferOutBoxRepository externalTransferOutBoxRepository;
@@ -34,7 +27,7 @@ public class TransferScheduler {
 
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
-    @Scheduled(fixedDelay = 10)
+//    @Scheduled(fixedDelay = 10)
     public void processTransferOutBoxMessage() {
 
         Optional<ExternalTransferOutBox> outbox = externalTransferOutBoxRepository.findOneForUpdate();
@@ -47,22 +40,7 @@ public class TransferScheduler {
 
         // 입금 요청
         ExternalDepositRequestDto externalDepositRequestDto = ExternalDepositRequestDto.of(transferHistory);
-        String body = null;
-        try {
-            body = objectMapper.writeValueAsString(externalDepositRequestDto);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException("parsing error");
-        }
-        Mono<ClientResponse> responseMono = webClient.post()
-                .uri("/account/transfer/deposit/post")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(body))
-                        .exchangeToMono(response -> Mono.just(response));
-
-        HttpStatus status = responseMono.block().statusCode();
-        if (!status.is2xxSuccessful()) {
-            return;
-        }
+        externalDepositService.callExternalDepositRequest(externalDepositRequestDto);
 
         // 아웃 박스 삭제
         externalTransferOutBoxRepository.delete(outBoxForUpdate);
@@ -70,7 +48,7 @@ public class TransferScheduler {
 
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
-    @Scheduled(fixedDelay = 10)
+//    @Scheduled(fixedDelay = 10)
     public void processTransferDepositOutBoxMessage() {
 
         Optional<ExternalTransferDepositOutBox> outbox = externalTransferDepositOutBoxRepository.findOneForUpdate();
@@ -82,7 +60,7 @@ public class TransferScheduler {
         ExternalDepositRequestDto externalDepositRequestDto = getExternalDepositRequestDto(outBoxForUpdate);
 
         // 입금 처리
-        boolean result = externalDepositService.execute(externalDepositRequestDto);
+        boolean result = externalDepositService.executeSuccessProcess(externalDepositRequestDto);
         if (!result) {
             return;
         }

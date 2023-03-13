@@ -28,7 +28,7 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional
@@ -50,7 +50,7 @@ public class ExternalDepositService {
         externalTransferDepositOutBoxRepository.save(outBox);
     }
 
-    public boolean execute(ExternalDepositRequestDto externalDepositRequestDto) {
+    public boolean executeSuccessProcess(ExternalDepositRequestDto externalDepositRequestDto) {
         Account account = accountRepository.findByAccountNumberForUpdate(externalDepositRequestDto.getDepositAccountNumber())
                 .orElseThrow(() -> new RuntimeException("deposit account doesn't exist"));
 
@@ -58,26 +58,38 @@ public class ExternalDepositService {
 
 //        saveTransferHistory(externalDepositRequestDto, depositAmountResult);
 
-        // 입금 요청
+        // 입금 완료 응답 보내기
         ExternalDepositSuccessRequestDto depositSuccessRequestDto = new ExternalDepositSuccessRequestDto(externalDepositRequestDto.getPublicTransferId(), externalTransferDepositSuccessCallbackUrl, true);
-        String body = null;
+        boolean result = callExternalDepositSuccessRequest(depositSuccessRequestDto);
+
+        return result;
+    }
+
+    @Async("serviceAsyncExecutor")
+    public void executeAllSuccessProcess(ExternalTransferDepositOutBox externalTransferDepositOutBox) {
+        // 아웃 박스 lock 걸고 조회
+        Optional<ExternalTransferDepositOutBox> outBoxForUpdate = externalTransferDepositOutBoxRepository.findExternalTransferDepositOutBoxForUpdate(externalTransferDepositOutBox.getId());
+        if (outBoxForUpdate.isEmpty()) {
+            return;
+        }
+        externalTransferDepositOutBox = outBoxForUpdate.get();
+        ExternalDepositRequestDto externalDepositRequestDto = getExternalDepositRequestDto(externalTransferDepositOutBox);
+
+        // 입금 진행
+        executeSuccessProcess(externalDepositRequestDto);
+
+        // 아웃 박스 삭제
+        externalTransferDepositOutBoxRepository.delete(externalTransferDepositOutBox);
+    }
+
+    private ExternalDepositRequestDto getExternalDepositRequestDto(ExternalTransferDepositOutBox outBoxForUpdate) {
+        ExternalDepositRequestDto externalDepositRequestDto = null;
         try {
-            body = objectMapper.writeValueAsString(depositSuccessRequestDto);
+            externalDepositRequestDto = objectMapper.readValue(outBoxForUpdate.getPayLoad(), ExternalDepositRequestDto.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("parsing error");
+            throw new RuntimeException(e.getMessage());
         }
-
-        Mono<ClientResponse> responseMono = webClient.post()
-                .uri("/account/transfer/deposit/success/post")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(body))
-                .exchangeToMono(response -> Mono.just(response));
-
-        HttpStatus status = responseMono.block().statusCode();
-        if (!status.is2xxSuccessful()) {
-            return false;
-        }
-        return true;
+        return externalDepositRequestDto;
     }
 
     private void saveTransferHistory(ExternalDepositRequestDto externalDepositRequestDto, BigDecimal depositAmountResult) {
@@ -120,25 +132,72 @@ public class ExternalDepositService {
     }
 
     @Async("serviceAsyncExecutor")
-    public void executeAllProcess(ExternalTransferOutBox outBox) {
+    public void executeAllRequestProcess(ExternalTransferOutBox outBox) {
 
         // 아웃 박스 select for update
-        ExternalTransferOutBox outBoxForUpdate = externalTransferOutBoxRepository.findExternalTransferOutBoxForUpdate(outBox.getId())
-                .orElseThrow(() -> new RuntimeException("OutBox doesn't exists"));
-
-        TransferHistory transferHistory = null;
-        try {
-            transferHistory = objectMapper.readValue(outBoxForUpdate.getPayLoad(), TransferHistory.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage());
+        Optional<ExternalTransferOutBox> outBoxForUpdate = externalTransferOutBoxRepository.findExternalTransferOutBoxForUpdate(outBox.getId());
+        if (outBoxForUpdate.isEmpty()) {
+            return;
         }
-
+        outBox = outBoxForUpdate.get();
+        TransferHistory transferHistory = getTransferHistory(outBox);
 
         // 입금 요청
         ExternalDepositRequestDto externalDepositRequestDto = ExternalDepositRequestDto.of(transferHistory);
         // 이체 입금 요청 API 호출
+        callExternalDepositRequest(externalDepositRequestDto);
 
         // 아웃 박스 삭제
-        externalTransferOutBoxRepository.delete(outBoxForUpdate);
+        externalTransferOutBoxRepository.delete(outBox);
+    }
+
+    private TransferHistory getTransferHistory(ExternalTransferOutBox outBox) {
+        TransferHistory transferHistory = null;
+        try {
+            transferHistory = objectMapper.readValue(outBox.getPayLoad(), TransferHistory.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return transferHistory;
+    }
+
+    public void callExternalDepositRequest(ExternalDepositRequestDto externalDepositRequestDto) {
+        String body = null;
+        try {
+            body = objectMapper.writeValueAsString(externalDepositRequestDto);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("parsing error");
+        }
+        Mono<ClientResponse> responseMono = webClient.post()
+                .uri("/account/transfer/deposit/post")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(body))
+                .exchangeToMono(response -> Mono.just(response));
+
+        HttpStatus status = responseMono.block().statusCode();
+        if (!status.is2xxSuccessful()) {
+            return;
+        }
+    }
+
+    private boolean callExternalDepositSuccessRequest(ExternalDepositSuccessRequestDto externalDepositSuccessRequestDto) {
+        String body = null;
+        try {
+            body = objectMapper.writeValueAsString(externalDepositSuccessRequestDto);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("parsing error");
+        }
+
+        Mono<ClientResponse> responseMono = webClient.post()
+                .uri("/account/transfer/deposit/success/post")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(body))
+                .exchangeToMono(response -> Mono.just(response));
+
+        HttpStatus status = responseMono.block().statusCode();
+        if (!status.is2xxSuccessful()) {
+            return false;
+        }
+        return true;
     }
 }

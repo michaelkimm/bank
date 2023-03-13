@@ -21,7 +21,6 @@ public class PublicTransferIdGenerator {
 
         int val = atomicInteger.getAndIncrement();
         sb.append(String.format("%05d", val));
-        System.out.println(sb.toString());
         return sb.toString();
     }
 }

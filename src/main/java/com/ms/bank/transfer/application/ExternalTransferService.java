@@ -61,13 +61,11 @@ public class ExternalTransferService {
     public void processTransferDepositSuccess(final ExternalDepositSuccessRequestDto externalDepositSuccessRequestDto) {
         TransferHistory transferHistory = transferHistoryRepository.findTransferHistoryByPublicTransferId(externalDepositSuccessRequestDto.getPublicTransferId())
                 .orElseThrow(() -> new RuntimeException("transfer history doesn't exist"));
-        log.info("in process deposit success");
         if (!externalDepositSuccessRequestDto.isSuccess()) {
             // 롤백
             transferHistory.setState(TransferState.CANCELED);
             depositToWithdrawalAccount(transferHistory);
         } else {
-            log.info("in process deposit finished");
             transferHistory.setState(TransferState.FINISHED);
         }
     }

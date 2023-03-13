@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,6 +21,11 @@ public interface ExternalTransferOutBoxRepository extends JpaRepository<External
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select e from ExternalTransferOutBox e where e.id = :id")
     Optional<ExternalTransferOutBox> findExternalTransferOutBoxForUpdate(@Param("id") Long id);
+
+    @QueryHints(@QueryHint(name = AvailableSettings.JPA_LOCK_TIMEOUT, value = SKIP_LOCKED))
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select e from ExternalTransferOutBox e")
+    List<ExternalTransferOutBox> findAllExternalTransferOutBoxForUpdate();
 
     @Query(nativeQuery = true, value = "SELECT * FROM external_transfer_out_box LIMIT 1 FOR UPDATE SKIP LOCKED")
     Optional<ExternalTransferOutBox> findOneForUpdate();

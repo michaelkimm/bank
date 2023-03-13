@@ -1,10 +1,14 @@
-package com.ms.bank.transfer.infrastructure.outbox;
+package com.ms.bank.transfer.infrastructure.outbox.scheduler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ms.bank.transfer.application.ExternalDepositService;
 import com.ms.bank.transfer.application.dto.ExternalDepositRequestDto;
 import com.ms.bank.transfer.domain.TransferHistory;
+import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBox;
+import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBoxRepository;
+import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBox;
+import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBoxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

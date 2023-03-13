@@ -5,6 +5,10 @@ spring:
     username: root
     password: root
 
+    hikari:
+      maximumPoolSize: 20
+      poolName: HikariCP
+
   jpa:
     open-in-view: true
     hibernate:

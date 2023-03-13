@@ -1,4 +1,4 @@
-package com.ms.bank.transfer.domain;
+package com.ms.bank.common.domain;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

@@ -29,6 +29,8 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 @RequiredArgsConstructor
 @Transactional
@@ -176,7 +178,7 @@ public class ExternalDepositService {
 
         HttpStatus status = responseMono.block().statusCode();
         if (!status.is2xxSuccessful()) {
-            return;
+            throw new RuntimeException("http response is not 200");
         }
     }
 

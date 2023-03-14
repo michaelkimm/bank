@@ -16,25 +16,27 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class TransferReadOnceSendMultipleScheduler {
+public class TransferReadOnceSendMultipleSchedulerV2 {
 
     private final ExternalDepositService externalDepositService;
     private final ExternalTransferOutBoxRepository externalTransferOutBoxRepository;
     private final ExternalTransferDepositOutBoxRepository externalTransferDepositOutBoxRepository;
+    private final Executor serviceAsyncExecutor;
 
     private WebClient webClient = WebClient.create("http://localhost:8080");
     private final ObjectMapper objectMapper;
 
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
-//    @Scheduled(fixedDelay = 100)
+    @Scheduled(fixedDelay = 1000)
     public void processTransferOutBoxMessage() {
 
         List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAllExternalTransferOutBoxForUpdate();
@@ -42,26 +44,27 @@ public class TransferReadOnceSendMultipleScheduler {
             return;
         }
 
-        List<Long> outBoxCompletedList = new LinkedList<>();
-        outboxList.forEach(outBox -> {
-            TransferHistory transferHistory = getTransferHistory(outBox);
-            ExternalDepositRequestDto externalDepositRequestDto = ExternalDepositRequestDto.of(transferHistory);
+        List<CompletableFuture<Void>> transferDepositFutures = outboxList.stream()
+                .map(this::getTransferHistory)
+                .map(ExternalDepositRequestDto::of)
+                .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.callExternalDepositRequest(externalDepositRequestDto), serviceAsyncExecutor))
+                .collect(Collectors.toList());
 
-            try {
-                externalDepositService.callExternalDepositRequest(externalDepositRequestDto);
-                outBoxCompletedList.add(outBox.getId());
-            } catch (RuntimeException e) {
-                log.error(e.getMessage());
+        CompletableFuture<Void> allFuture = CompletableFuture.allOf(transferDepositFutures.toArray(new CompletableFuture[0]));
+
+        try {
+            allFuture.join();
+            if (allFuture.isDone()) {
+                externalTransferOutBoxRepository.deleteAll(outboxList);
             }
-        });
-
-        if (!outBoxCompletedList.isEmpty()) {
-            externalTransferOutBoxRepository.deleteAllById(outBoxCompletedList);
+        } catch (Exception e) {
+            log.info(e.getMessage());
         }
     }
+
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
-//    @Scheduled(fixedDelay = 100)
+    @Scheduled(fixedDelay = 1000)
     public void processTransferDepositOutBoxMessage() {
 
         List<ExternalTransferDepositOutBox> outboxList = externalTransferDepositOutBoxRepository.findAllExternalTransferDepositOutBoxForUpdate();
@@ -69,18 +72,17 @@ public class TransferReadOnceSendMultipleScheduler {
             return;
         }
 
-        List<Long> outBoxCompletedList = new LinkedList<>();
-        outboxList.forEach(outBox -> {
-            ExternalDepositRequestDto externalDepositRequestDto = getExternalDepositRequestDto(outBox);
+        List<CompletableFuture<Boolean>> transferDepositFutures = outboxList.stream()
+                .map(this::getExternalDepositRequestDto)
+                .map(externalDepositRequestDto -> CompletableFuture.supplyAsync(() -> externalDepositService.executeSuccessProcess(externalDepositRequestDto), serviceAsyncExecutor))
+                .collect(Collectors.toList());
 
-            boolean result = externalDepositService.executeSuccessProcess(externalDepositRequestDto);
-            if (result) {
-                outBoxCompletedList.add(outBox.getId());
-            }
-        });
+        List<Boolean> transferDepositResults = transferDepositFutures.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
 
-        if (!outBoxCompletedList.isEmpty()) {
-            externalTransferDepositOutBoxRepository.deleteAllById(outBoxCompletedList);
+        if (!transferDepositResults.contains(false)) {
+            externalTransferDepositOutBoxRepository.deleteAll(outboxList);
         }
     }
 

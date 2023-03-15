@@ -6,7 +6,7 @@ spring:
     password: root
 
     hikari:
-      maximumPoolSize: 110
+      maximumPoolSize: 225
       poolName: HikariCP
 
   jpa:

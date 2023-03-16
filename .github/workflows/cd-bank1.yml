@@ -1,0 +1,50 @@
+# 작업명
+name: CD NCP
+on:
+  push:
+    branches:
+      - 'develop'
+      - 'main'
+jobs:
+  CD:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      - name: Grant Execute permission for gradlew
+        run: chmod +x gradlew
+        shell: bash
+      - name: Build with Gradle
+        run: ./gradlew build -x test
+        shell: bash
+      - name: Login to NCP Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.NCP_CONTAINER_REGISTRY }}
+          username: ${{ secrets.NCP_ACCESS_KEY }}
+          password: ${{ secrets.NCP_SECRET_KEY }}
+      - name: Docker build & push
+        if: contains(github.ref, 'main')
+        run: |
+          docker build -t ${{ secrets.APP_NAME }} .
+          docker image tag ${{ secrets.APP_NAME }} ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+          docker push ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+          
+      - name: connect ssh bank1
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOYMENT_HOST }}
+          username: ${{ secrets.DEPLOYMENT_USERNAME }}
+          password: ${{ secrets.DEPLOYMENT_PASSWORD }}
+          port: ${{ secrets.DEPLOYMENT_PORT }}
+          script: |
+            docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+            docker stop ${{ secrets.APP_NAME }}
+            docker rm ${{ secrets.APP_NAME }}
+            docker run --name ${{ secrets.APP_NAME }} -d -p 8080:8080 ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+            docker image prune -f

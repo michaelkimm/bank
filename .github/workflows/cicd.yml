@@ -71,7 +71,7 @@ jobs:
             docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
             docker stop ${{ secrets.APP_NAME }}
             docker rm ${{ secrets.APP_NAME }}
-            docker run --name ${{ secrets.APP_NAME }} --network ${{ secrets.CONTAINER_NETWORK }} -d -p 8080:8080 ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+            docker run --name ${{ secrets.APP_NAME }} -d -p 8080:8080 ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
             docker image prune -f
             
       - name: connect ssh bank2
@@ -85,5 +85,5 @@ jobs:
             docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
             docker stop ${{ secrets.APP_NAME }}
             docker rm ${{ secrets.APP_NAME }}
-            docker run --name ${{ secrets.APP_NAME }} --network ${{ secrets.CONTAINER_NETWORK }} -d -p 8080:8080 ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+            docker run --name ${{ secrets.APP_NAME }} -d -p 8080:8080 ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
             docker image prune -f

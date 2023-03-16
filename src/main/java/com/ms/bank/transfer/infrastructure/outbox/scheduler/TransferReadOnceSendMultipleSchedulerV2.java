@@ -52,9 +52,12 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
         CompletableFuture<Void> allFuture = CompletableFuture.allOf(transferDepositFutures.toArray(new CompletableFuture[0]));
 
-        if (allFuture.isDone()) {
-            externalTransferOutBoxRepository.deleteAll(outboxList);
-        } else {
+        try {
+            allFuture.join();
+            if (allFuture.isDone()) {
+                externalTransferOutBoxRepository.deleteAll(outboxList);
+            }
+        } catch (Exception e) {
             throw new RuntimeException("callExternalDepositRequest failed");
         }
     }

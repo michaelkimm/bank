@@ -36,7 +36,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
-//    @Scheduled(fixedDelay = 100)
+    @Scheduled(fixedDelay = 100)
     public void processTransferOutBoxMessage() {
 
         List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAllExternalTransferOutBoxForUpdate();
@@ -61,7 +61,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
-//    @Scheduled(fixedDelay = 100)
+    @Scheduled(fixedDelay = 100)
     public void processTransferDepositOutBoxMessage() {
 
         List<ExternalTransferDepositOutBox> outboxList = externalTransferDepositOutBoxRepository.findAllExternalTransferDepositOutBoxForUpdate();

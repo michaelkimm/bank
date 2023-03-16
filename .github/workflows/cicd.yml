@@ -59,7 +59,8 @@ jobs:
           docker build -t ${{ secrets.APP_NAME }} .
           docker image tag ${{ secrets.APP_NAME }} ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
           docker push ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
-      - name: connect ssh
+          
+      - name: connect ssh bank1
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEPLOYMENT_HOST }}
@@ -70,5 +71,19 @@ jobs:
             docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
             docker stop ${{ secrets.APP_NAME }}
             docker rm ${{ secrets.APP_NAME }}
-            docker run --name ${{ secrets.APP_NAME }} --network ${{ secrets.CONTAINER_NETWORK }} -d -p 8080:8080 ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+            docker run --name ${{ secrets.APP_NAME }} -d -p 8080:8080 ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+            docker image prune -f
+            
+      - name: connect ssh bank2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOYMENT_HOST_BANK2 }}
+          username: ${{ secrets.DEPLOYMENT_USERNAME_BANK2 }}
+          password: ${{ secrets.DEPLOYMENT_PASSWORD_BANK2 }}
+          port: ${{ secrets.DEPLOYMENT_PORT }}
+          script: |
+            docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+            docker stop ${{ secrets.APP_NAME }}
+            docker rm ${{ secrets.APP_NAME }}
+            docker run --name ${{ secrets.APP_NAME }} -d -p 8080:8080 ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
             docker image prune -f

@@ -2,8 +2,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://db-fm7dp.vpc-cdb.ntruss.com:3306/bank
-    username: root
-    password: root
+    username: bank
+    password: kkk0926@@
 
     hikari:
       maximumPoolSize: 225

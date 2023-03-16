@@ -31,7 +31,6 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     private final ExternalTransferDepositOutBoxRepository externalTransferDepositOutBoxRepository;
     private final Executor serviceAsyncExecutor;
 
-    private WebClient webClient = WebClient.create("http://localhost:8080");
     private final ObjectMapper objectMapper;
 
     @Transactional

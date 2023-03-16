@@ -9,6 +9,7 @@ import com.ms.bank.transfer.application.dto.ExternalDepositRequestDto;
 import com.ms.bank.transfer.application.dto.ExternalDepositSuccessRequestDto;
 import com.ms.bank.transfer.domain.TransferHistory;
 import com.ms.bank.transfer.domain.TransferState;
+import com.ms.bank.transfer.infrastructure.Bank;
 import com.ms.bank.transfer.infrastructure.TransactionGuidGenerator;
 import com.ms.bank.transfer.infrastructure.TransferHistoryRepository;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBox;
@@ -29,8 +30,6 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 @RequiredArgsConstructor
 @Transactional
@@ -43,9 +42,6 @@ public class ExternalDepositService {
     private final TransferHistoryRepository transferHistoryRepository;
 
     private final ObjectMapper objectMapper;
-    private final WebClient webClient = WebClient.create("http://localhost:8080");
-
-    private final String externalTransferDepositSuccessCallbackUrl = "http://localhost:8080";
 
     public void store(ExternalDepositRequestDto externalDepositRequestDto) {
         ExternalTransferDepositOutBox outBox = toExternalTransferDepositOutBox(externalDepositRequestDto);
@@ -59,9 +55,10 @@ public class ExternalDepositService {
         BigDecimal depositAmountResult = deposit(externalDepositRequestDto, account);
 
 //        saveTransferHistory(externalDepositRequestDto, depositAmountResult);
+        Bank withdrawalBank = Bank.findByBankId(externalDepositRequestDto.getWithdrawalBankId());
 
         // 입금 완료 응답 보내기
-        ExternalDepositSuccessRequestDto depositSuccessRequestDto = new ExternalDepositSuccessRequestDto(externalDepositRequestDto.getPublicTransferId(), externalTransferDepositSuccessCallbackUrl, true);
+        ExternalDepositSuccessRequestDto depositSuccessRequestDto = new ExternalDepositSuccessRequestDto(externalDepositRequestDto.getPublicTransferId(), withdrawalBank.getHost(), true);
         boolean result = callExternalDepositSuccessRequest(depositSuccessRequestDto);
 
         return result;
@@ -170,6 +167,9 @@ public class ExternalDepositService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("parsing error");
         }
+        Bank depositBank = Bank.findByBankId(externalDepositRequestDto.getDepositBankId());
+        WebClient webClient = depositBank.getWebClient();
+
         Mono<ClientResponse> responseMono = webClient.post()
                 .uri("/account/transfer/deposit/post")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -189,6 +189,8 @@ public class ExternalDepositService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("parsing error");
         }
+
+        WebClient webClient = WebClient.create(externalDepositSuccessRequestDto.getCallbackUrl());
 
         Mono<ClientResponse> responseMono = webClient.post()
                 .uri("/account/transfer/deposit/success/post")

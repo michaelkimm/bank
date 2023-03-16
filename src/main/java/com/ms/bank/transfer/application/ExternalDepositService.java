@@ -43,10 +43,9 @@ public class ExternalDepositService {
     private final TransferHistoryRepository transferHistoryRepository;
 
     private final ObjectMapper objectMapper;
-    private final WebClient toBank2WebClient = WebClient.create("http://175.45.202.115:8080");
-    private final WebClient toBank1WebClient = WebClient.create("http://223.130.133.48:8080");
+    private final WebClient webClient = WebClient.create("http://localhost:8080");
 
-    private final String externalTransferDepositSuccessCallbackUrl = "http://175.45.202.115:8080";
+    private final String externalTransferDepositSuccessCallbackUrl = "http://localhost:8080";
 
     public void store(ExternalDepositRequestDto externalDepositRequestDto) {
         ExternalTransferDepositOutBox outBox = toExternalTransferDepositOutBox(externalDepositRequestDto);
@@ -60,7 +59,7 @@ public class ExternalDepositService {
         BigDecimal depositAmountResult = deposit(externalDepositRequestDto, account);
 
 //        saveTransferHistory(externalDepositRequestDto, depositAmountResult);
-        
+
         // 입금 완료 응답 보내기
         ExternalDepositSuccessRequestDto depositSuccessRequestDto = new ExternalDepositSuccessRequestDto(externalDepositRequestDto.getPublicTransferId(), externalTransferDepositSuccessCallbackUrl, true);
         boolean result = callExternalDepositSuccessRequest(depositSuccessRequestDto);
@@ -171,7 +170,7 @@ public class ExternalDepositService {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("parsing error");
         }
-        Mono<ClientResponse> responseMono = toBank2WebClient.post()
+        Mono<ClientResponse> responseMono = webClient.post()
                 .uri("/account/transfer/deposit/post")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(body))
@@ -191,7 +190,7 @@ public class ExternalDepositService {
             throw new RuntimeException("parsing error");
         }
 
-        Mono<ClientResponse> responseMono = toBank1WebClient.post()
+        Mono<ClientResponse> responseMono = webClient.post()
                 .uri("/account/transfer/deposit/success/post")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(body))

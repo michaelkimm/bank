@@ -33,11 +33,12 @@ create table member (
 ) engine=InnoDB;
 
 create table transfer_history (
-   create_date date not null,
+    create_date date not null,
     guid varchar(255) not null,
     amount_after_deposit decimal(19,2),
     amount_after_withdrawal decimal(19,2),
-    create_time datetime(6),
+    created_at datetime(6),
+    updated_at datetime(6),
     deposit_account_number varchar(20),
     deposit_bank_id varchar(2),
     deposit_member_name varchar(30),

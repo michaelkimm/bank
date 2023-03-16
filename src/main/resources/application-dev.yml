@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://db-fm7dp.vpc-cdb.ntruss.com:3306/bank
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:3306/bank
     username: bank
     password: kkk0926@@
 

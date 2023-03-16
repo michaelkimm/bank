@@ -7,6 +7,7 @@ import com.ms.bank.transfer.application.dto.ExternalDepositSuccessRequestDto;
 import com.ms.bank.transfer.application.dto.TransferRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +19,13 @@ public class TransferController {
     private final TransferService transferService;
     private final ExternalDepositService externalDepositService;
 
+    @Value("spring.datasource.url")
+    private String url;
+
     @GetMapping("/account/transfer/get")
     ResponseEntity<Void> getTransferHistory() {
         log.info("transfer-get");
+        log.info("aa : " + url);
         return ResponseEntity
                 .ok()
                 .build();

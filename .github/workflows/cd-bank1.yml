@@ -46,5 +46,5 @@ jobs:
             docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
             docker stop ${{ secrets.APP_NAME }}
             docker rm ${{ secrets.APP_NAME }}
-            docker run --name ${{ secrets.APP_NAME }} -d -p 8080:8080 -e "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+            docker run --name ${{ secrets.APP_NAME }} -d -p 8080:8080 -e "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
             docker image prune -f

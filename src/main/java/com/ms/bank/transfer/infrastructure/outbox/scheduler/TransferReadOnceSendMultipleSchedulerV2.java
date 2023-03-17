@@ -43,6 +43,8 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             return;
         }
 
+        log.info("처리 예정 이체 '요청' 아웃박스 개수: {}", outboxList.size());
+
         List<CompletableFuture<Void>> transferDepositFutures = outboxList.stream()
                 .map(this::getTransferHistory)
                 .map(ExternalDepositRequestDto::of)
@@ -70,6 +72,8 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         if (outboxList.isEmpty()) {
             return;
         }
+
+        log.info("처리 예정 이체 '입금' 아웃박스 개수: {}", outboxList.size());
 
         List<CompletableFuture<Boolean>> transferDepositFutures = outboxList.stream()
                 .map(this::getExternalDepositRequestDto)

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ms.bank.transfer.application.ExternalDepositService;
 import com.ms.bank.transfer.application.dto.ExternalDepositRequestDto;
 import com.ms.bank.transfer.domain.TransferHistory;
+import com.ms.bank.transfer.domain.TransferState;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBox;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBoxRepository;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBox;
@@ -57,10 +58,17 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             allFuture.join();
             if (allFuture.isDone()) {
                 externalTransferOutBoxRepository.deleteAll(outboxList);
+                outboxList.stream()
+                        .map(this::getTransferHistory)
+                        .forEach(this::processTransferDeposit);
             }
         } catch (Exception e) {
             throw new RuntimeException("callExternalDepositRequest failed");
         }
+    }
+
+    private void processTransferDeposit(TransferHistory transferHistory) {
+        transferHistory.setState(TransferState.FINISHED);
     }
 
 //    @Transactional

@@ -48,16 +48,21 @@ public class ExternalDepositService {
         externalTransferDepositOutBoxRepository.save(outBox);
     }
 
-    public boolean executeSuccessProcess(ExternalDepositRequestDto externalDepositRequestDto) {
+    public void executeTransferDeposit(ExternalDepositRequestDto externalDepositRequestDto) {
         Account account = accountRepository.findByAccountNumberForUpdate(externalDepositRequestDto.getDepositAccountNumber())
                 .orElseThrow(() -> new RuntimeException("deposit account doesn't exist"));
 
         BigDecimal depositAmountResult = deposit(externalDepositRequestDto, account);
 
         saveTransferHistory(externalDepositRequestDto, depositAmountResult);
-        Bank withdrawalBank = Bank.findByBankId(externalDepositRequestDto.getWithdrawalBankId());
+    }
+
+    public boolean executeSuccessProcess(ExternalDepositRequestDto externalDepositRequestDto) {
+        // 이체 입금 진행
+        executeTransferDeposit(externalDepositRequestDto);
 
         // 입금 완료 응답 보내기
+        Bank withdrawalBank = Bank.findByBankId(externalDepositRequestDto.getWithdrawalBankId());
         ExternalDepositSuccessRequestDto depositSuccessRequestDto = new ExternalDepositSuccessRequestDto(externalDepositRequestDto.getPublicTransferId(), withdrawalBank.getHost(), true);
         boolean result = callExternalDepositSuccessRequest(depositSuccessRequestDto);
 

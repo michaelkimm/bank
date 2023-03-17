@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -29,7 +28,8 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     private final ExternalDepositService externalDepositService;
     private final ExternalTransferOutBoxRepository externalTransferOutBoxRepository;
     private final ExternalTransferDepositOutBoxRepository externalTransferDepositOutBoxRepository;
-    private final Executor serviceAsyncExecutor;
+    private final Executor depositProcessAsyncExecutor;
+    private final Executor depositSuccessAsyncExecutor;
 
     private final ObjectMapper objectMapper;
 
@@ -46,7 +46,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         List<CompletableFuture<Void>> transferDepositFutures = outboxList.stream()
                 .map(this::getTransferHistory)
                 .map(ExternalDepositRequestDto::of)
-                .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.callExternalDepositRequest(externalDepositRequestDto), serviceAsyncExecutor))
+                .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.callExternalDepositRequest(externalDepositRequestDto), depositProcessAsyncExecutor))
                 .collect(Collectors.toList());
 
         CompletableFuture<Void> allFuture = CompletableFuture.allOf(transferDepositFutures.toArray(new CompletableFuture[0]));
@@ -73,7 +73,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
         List<CompletableFuture<Boolean>> transferDepositFutures = outboxList.stream()
                 .map(this::getExternalDepositRequestDto)
-                .map(externalDepositRequestDto -> CompletableFuture.supplyAsync(() -> externalDepositService.executeSuccessProcess(externalDepositRequestDto), serviceAsyncExecutor))
+                .map(externalDepositRequestDto -> CompletableFuture.supplyAsync(() -> externalDepositService.executeSuccessProcess(externalDepositRequestDto), depositSuccessAsyncExecutor))
                 .collect(Collectors.toList());
 
         List<Boolean> transferDepositResults = transferDepositFutures.stream()

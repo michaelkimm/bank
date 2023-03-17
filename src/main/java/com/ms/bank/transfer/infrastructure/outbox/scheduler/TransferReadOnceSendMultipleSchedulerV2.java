@@ -6,6 +6,7 @@ import com.ms.bank.transfer.application.ExternalDepositService;
 import com.ms.bank.transfer.application.dto.ExternalDepositRequestDto;
 import com.ms.bank.transfer.domain.TransferHistory;
 import com.ms.bank.transfer.domain.TransferState;
+import com.ms.bank.transfer.infrastructure.TransferHistoryRepository;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBox;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBoxRepository;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBox;
@@ -29,6 +30,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     private final ExternalDepositService externalDepositService;
     private final ExternalTransferOutBoxRepository externalTransferOutBoxRepository;
     private final ExternalTransferDepositOutBoxRepository externalTransferDepositOutBoxRepository;
+    private final TransferHistoryRepository transferHistoryRepository;
     private final Executor depositProcessAsyncExecutor;
     private final Executor depositSuccessAsyncExecutor;
 
@@ -69,6 +71,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
     private void processTransferDeposit(TransferHistory transferHistory) {
         transferHistory.setState(TransferState.FINISHED);
+        transferHistoryRepository.save(transferHistory);
     }
 
 //    @Transactional

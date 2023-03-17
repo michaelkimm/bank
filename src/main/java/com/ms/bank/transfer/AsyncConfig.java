@@ -24,8 +24,8 @@ public class AsyncConfig {
     @Bean("depositProcessAsyncExecutor")
     public Executor depositProcessAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(50);
-        executor.setMaxPoolSize(50);
+        executor.setCorePoolSize(100);
+        executor.setMaxPoolSize(100);
         executor.setThreadNamePrefix("d-p-service-a-t");
         executor.setDaemon(true);
         executor.initialize(); // 꼭 써줘야 한다.
@@ -35,8 +35,8 @@ public class AsyncConfig {
     @Bean("depositSuccessAsyncExecutor")
     public Executor depositSuccessAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(50);
-        executor.setMaxPoolSize(50);
+        executor.setCorePoolSize(100);
+        executor.setMaxPoolSize(100);
         executor.setThreadNamePrefix("d-s-service-a-t");
         executor.setDaemon(true);
         executor.initialize(); // 꼭 써줘야 한다.

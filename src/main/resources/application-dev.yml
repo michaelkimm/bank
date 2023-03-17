@@ -6,7 +6,7 @@ spring:
     password: kkk0926@@
 
     hikari:
-      maximumPoolSize: 225
+      maximumPoolSize: 450
       poolName: HikariCP
 
   jpa:

@@ -54,7 +54,7 @@ public class ExternalDepositService {
 
         BigDecimal depositAmountResult = deposit(externalDepositRequestDto, account);
 
-//        saveTransferHistory(externalDepositRequestDto, depositAmountResult);
+        saveTransferHistory(externalDepositRequestDto, depositAmountResult);
         Bank withdrawalBank = Bank.findByBankId(externalDepositRequestDto.getWithdrawalBankId());
 
         // 입금 완료 응답 보내기

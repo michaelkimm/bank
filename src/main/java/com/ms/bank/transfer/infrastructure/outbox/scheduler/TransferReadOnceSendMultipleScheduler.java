@@ -5,12 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ms.bank.transfer.application.ExternalDepositService;
 import com.ms.bank.transfer.application.dto.ExternalDepositRequestDto;
 import com.ms.bank.transfer.domain.TransferHistory;
+import com.ms.bank.transfer.domain.TransferState;
+import com.ms.bank.transfer.infrastructure.TransferHistoryRepository;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBox;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBoxRepository;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBox;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBoxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,12 +28,13 @@ public class TransferReadOnceSendMultipleScheduler {
     private final ExternalDepositService externalDepositService;
     private final ExternalTransferOutBoxRepository externalTransferOutBoxRepository;
     private final ExternalTransferDepositOutBoxRepository externalTransferDepositOutBoxRepository;
+    private final TransferHistoryRepository transferHistoryRepository;
 
     private final ObjectMapper objectMapper;
 
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
-//    @Scheduled(fixedDelay = 100)
+    @Scheduled(fixedDelay = 100)
     public void processTransferOutBoxMessage() {
 
         List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAllExternalTransferOutBoxForUpdate();
@@ -52,6 +56,9 @@ public class TransferReadOnceSendMultipleScheduler {
         });
 
         if (!outBoxCompletedList.isEmpty()) {
+            outboxList.stream()
+                    .map(this::getTransferHistory)
+                    .forEach(this::processTransferDeposit);
             externalTransferOutBoxRepository.deleteAllById(outBoxCompletedList);
         }
     }
@@ -78,6 +85,13 @@ public class TransferReadOnceSendMultipleScheduler {
         if (!outBoxCompletedList.isEmpty()) {
             externalTransferDepositOutBoxRepository.deleteAllById(outBoxCompletedList);
         }
+    }
+
+    private void processTransferDeposit(TransferHistory transferHistory) {
+        transferHistory = transferHistoryRepository.findTransferHistoryByPublicTransferId(transferHistory.getPublicTransferId())
+                .orElseThrow(() -> new RuntimeException("transfer history does not exist"));
+        transferHistory.setState(TransferState.FINISHED);
+        transferHistoryRepository.save(transferHistory);
     }
 
     private TransferHistory getTransferHistory(ExternalTransferOutBox outBoxForUpdate) {

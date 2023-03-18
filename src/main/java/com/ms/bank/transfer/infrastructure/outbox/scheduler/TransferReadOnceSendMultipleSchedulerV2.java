@@ -70,6 +70,8 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     }
 
     private void processTransferDeposit(TransferHistory transferHistory) {
+        transferHistory = transferHistoryRepository.findTransferHistoryByPublicTransferId(transferHistory.getPublicTransferId())
+                .orElseThrow(() -> new RuntimeException("transfer history does not exist"));
         transferHistory.setState(TransferState.FINISHED);
         transferHistoryRepository.save(transferHistory);
     }

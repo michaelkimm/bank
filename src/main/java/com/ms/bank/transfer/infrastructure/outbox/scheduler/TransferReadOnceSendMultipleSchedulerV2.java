@@ -32,7 +32,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     private final ExternalTransferDepositOutBoxRepository externalTransferDepositOutBoxRepository;
     private final TransferHistoryRepository transferHistoryRepository;
     private final Executor depositProcessAsyncExecutor;
-    private final Executor depositSuccessAsyncExecutor;
+//    private final Executor depositSuccessAsyncExecutor;
 
     private final ObjectMapper objectMapper;
 

@@ -51,7 +51,7 @@ public class TransferController {
 
     @PostMapping("/account/transfer/deposit/success/post")
     ResponseEntity<Void> transferDepositSuccess(@RequestBody ExternalDepositSuccessRequestDto externalDepositRequestDto) {
-        log.info("deposit success posted")
+        log.info("deposit success posted");
         transferService.processTransferDepositSuccess(externalDepositRequestDto);
         return ResponseEntity
                 .ok()

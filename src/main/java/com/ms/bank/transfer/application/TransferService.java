@@ -9,8 +9,10 @@ import com.ms.bank.transfer.domain.TransferHistory;
 import com.ms.bank.transfer.domain.TransferState;
 import com.ms.bank.transfer.infrastructure.TransferHistoryRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class TransferService {
@@ -39,6 +41,7 @@ public class TransferService {
             depositToWithdrawalAccount(transferHistory);
         } else {
             transferHistory.setState(TransferState.FINISHED);
+            log.info("fin!");
         }
     }
 

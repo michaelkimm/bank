@@ -11,6 +11,7 @@ import com.ms.bank.transfer.infrastructure.TransferHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,6 +33,7 @@ public class TransferService {
         }
     }
 
+    @Transactional
     public void processTransferDepositSuccess(final ExternalDepositSuccessRequestDto externalDepositSuccessRequestDto) {
         TransferHistory transferHistory = transferHistoryRepository.findTransferHistoryByPublicTransferId(externalDepositSuccessRequestDto.getPublicTransferId())
                 .orElseThrow(() -> new RuntimeException("transfer history doesn't exist"));
@@ -41,7 +43,6 @@ public class TransferService {
             depositToWithdrawalAccount(transferHistory);
         } else {
             transferHistory.setState(TransferState.FINISHED);
-            log.info("fin!");
         }
     }
 

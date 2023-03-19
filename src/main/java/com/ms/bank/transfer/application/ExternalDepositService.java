@@ -54,7 +54,7 @@ public class ExternalDepositService {
 
         BigDecimal depositAmountResult = deposit(externalDepositRequestDto, account);
 
-//        saveTransferHistory(externalDepositRequestDto, depositAmountResult);
+        saveTransferHistory(externalDepositRequestDto, depositAmountResult);
     }
 
     public boolean executeSuccessProcess(ExternalDepositRequestDto externalDepositRequestDto) {

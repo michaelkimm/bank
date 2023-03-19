@@ -32,13 +32,13 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     private final ExternalTransferDepositOutBoxRepository externalTransferDepositOutBoxRepository;
     private final TransferHistoryRepository transferHistoryRepository;
     private final Executor depositProcessAsyncExecutor;
-//    private final Executor depositSuccessAsyncExecutor;
+    private final Executor depositSuccessAsyncExecutor;
 
     private final ObjectMapper objectMapper;
 
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
-//    @Scheduled(fixedDelay = 100)
+    @Scheduled(fixedDelay = 100)
     public void processTransferOutBoxMessage() {
 
         List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAllExternalTransferOutBoxForUpdate();
@@ -60,9 +60,9 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             allFuture.join();
             if (allFuture.isDone()) {
                 externalTransferOutBoxRepository.deleteAll(outboxList);
-                outboxList.stream()
-                        .map(this::getTransferHistory)
-                        .forEach(this::processTransferDeposit);
+//                outboxList.stream()
+//                        .map(this::getTransferHistory)
+//                        .forEach(this::processTransferDeposit);
             }
         } catch (Exception e) {
             throw new RuntimeException("callExternalDepositRequest failed");
@@ -76,31 +76,31 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         transferHistoryRepository.save(transferHistory);
     }
 
-//    @Transactional
-////    @Async("transferSchedulerAsyncExecutor")
-//    @Scheduled(fixedDelay = 100)
-//    public void processTransferDepositOutBoxMessage() {
-//
-//        List<ExternalTransferDepositOutBox> outboxList = externalTransferDepositOutBoxRepository.findAllExternalTransferDepositOutBoxForUpdate();
-//        if (outboxList.isEmpty()) {
-//            return;
-//        }
-//
-//        log.info("처리 예정 이체 '입금' 아웃박스 개수: {}", outboxList.size());
-//
-//        List<CompletableFuture<Boolean>> transferDepositFutures = outboxList.stream()
-//                .map(this::getExternalDepositRequestDto)
-//                .map(externalDepositRequestDto -> CompletableFuture.supplyAsync(() -> externalDepositService.executeSuccessProcess(externalDepositRequestDto), depositSuccessAsyncExecutor))
-//                .collect(Collectors.toList());
-//
-//        List<Boolean> transferDepositResults = transferDepositFutures.stream()
-//                .map(CompletableFuture::join)
-//                .collect(Collectors.toList());
-//
-//        if (!transferDepositResults.contains(false)) {
-//            externalTransferDepositOutBoxRepository.deleteAll(outboxList);
-//        }
-//    }
+    @Transactional
+//    @Async("transferSchedulerAsyncExecutor")
+    @Scheduled(fixedDelay = 100)
+    public void processTransferDepositOutBoxMessage() {
+
+        List<ExternalTransferDepositOutBox> outboxList = externalTransferDepositOutBoxRepository.findAllExternalTransferDepositOutBoxForUpdate();
+        if (outboxList.isEmpty()) {
+            return;
+        }
+
+        log.info("처리 예정 이체 '입금' 아웃박스 개수: {}", outboxList.size());
+
+        List<CompletableFuture<Boolean>> transferDepositFutures = outboxList.stream()
+                .map(this::getExternalDepositRequestDto)
+                .map(externalDepositRequestDto -> CompletableFuture.supplyAsync(() -> externalDepositService.executeSuccessProcess(externalDepositRequestDto), depositSuccessAsyncExecutor))
+                .collect(Collectors.toList());
+
+        List<Boolean> transferDepositResults = transferDepositFutures.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
+
+        if (!transferDepositResults.contains(false)) {
+            externalTransferDepositOutBoxRepository.deleteAll(outboxList);
+        }
+    }
 
     private TransferHistory getTransferHistory(ExternalTransferOutBox outBoxForUpdate) {
         TransferHistory transferHistory = null;

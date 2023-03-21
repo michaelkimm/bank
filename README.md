@@ -27,6 +27,7 @@
 - Why JPA?
 - Why Transactional Outbox pattern?
 - Why Polling?
+- Why N VUsers?
 
 ## 이체 성능 개선기
 1. **서버 1개, db 1개 사용, 타행 이체시 localhost로 자체 호출, 스케줄러 전략 4개 시도, 스케줄러 메소드 2개 사용**

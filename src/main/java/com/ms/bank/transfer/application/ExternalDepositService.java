@@ -51,10 +51,6 @@ public class ExternalDepositService {
         externalTransferDepositOutBoxRepository.save(outBox);
     }
 
-    @Retryable(
-        value = {ObjectOptimisticLockingFailureException.class},
-        maxAttempts = Integer.MAX_VALUE,
-        backoff = @Backoff(delay = 10))
     public void executeTransferDeposit(ExternalDepositRequestDto externalDepositRequestDto) {
         Account account = accountRepository.findByAccountNumberForUpdate(externalDepositRequestDto.getDepositAccountNumber())
                 .orElseThrow(() -> new RuntimeException("deposit account doesn't exist"));

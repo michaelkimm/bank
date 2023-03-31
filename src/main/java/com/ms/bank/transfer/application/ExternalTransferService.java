@@ -39,10 +39,6 @@ public class ExternalTransferService {
     private final String externalTransferId = "01";
     private final ObjectMapper objectMapper;
 
-    @Retryable(
-            value = {ObjectOptimisticLockingFailureException.class},
-            maxAttempts = Integer.MAX_VALUE,
-            backoff = @Backoff(delay = 10))
     public void executeTransfer(final TransferRequestDto transferRequestDto) {
         // 이체 전 검증 진행
 

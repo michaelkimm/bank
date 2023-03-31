@@ -19,6 +19,9 @@ import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBoxReposito
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +51,10 @@ public class ExternalDepositService {
         externalTransferDepositOutBoxRepository.save(outBox);
     }
 
+    @Retryable(
+        value = {ObjectOptimisticLockingFailureException.class},
+        maxAttempts = Integer.MAX_VALUE,
+        backoff = @Backoff(delay = 10))
     public void executeTransferDeposit(ExternalDepositRequestDto externalDepositRequestDto) {
         Account account = accountRepository.findByAccountNumberForUpdate(externalDepositRequestDto.getDepositAccountNumber())
                 .orElseThrow(() -> new RuntimeException("deposit account doesn't exist"));

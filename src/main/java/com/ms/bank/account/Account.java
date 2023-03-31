@@ -23,7 +23,12 @@ public class Account {
     private BigDecimal balance = BigDecimal.ZERO;
 
     @Version
-    private Long version;
+    private Long version = 1L;
 
     protected Account() {}
+
+    public Account(String accountNumber, BigDecimal balance) {
+        this.accountNumber = accountNumber;
+        this.balance = balance;
+    }
 }

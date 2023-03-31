@@ -16,6 +16,9 @@ import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBox;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBoxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,9 +39,13 @@ public class ExternalTransferService {
     private final String externalTransferId = "01";
     private final ObjectMapper objectMapper;
 
+    @Retryable(
+            value = {ObjectOptimisticLockingFailureException.class},
+            maxAttempts = Integer.MAX_VALUE,
+            backoff = @Backoff(delay = 10))
     public void executeTransfer(final TransferRequestDto transferRequestDto) {
         // 이체 전 검증 진행
-        
+
         // 출금
         Account withdrawalAccount = accountRepository.findByAccountNumberForUpdate(transferRequestDto.getWithdrawalAccountNumber())
                 .orElseThrow(() -> new RuntimeException("Account doesn't exist"));

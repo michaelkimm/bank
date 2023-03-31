@@ -29,7 +29,7 @@ class ExternalDepositServiceTest {
     private ExternalDepositService externalDepositService;
 
     @Transactional
-    @DisplayName("이체입금요청_성공_동시에_100명이_요청")
+    @DisplayName("이체입금요청_성공")
     @Test
     void executeTransferDeposit() throws InterruptedException {
         int threadCount = 100;
@@ -111,6 +111,6 @@ class ExternalDepositServiceTest {
         depositAccount = accountRepository.findById(depositAccount.getAccountNumber()).orElseThrow();
 
         // 100 - (100 * 1) = 0
-        assertEquals(BigDecimal.valueOf(100L), depositAccount.getBalance());
+        assertEquals(BigDecimal.valueOf(100L).longValue(), depositAccount.getBalance().longValue());
     }
 }

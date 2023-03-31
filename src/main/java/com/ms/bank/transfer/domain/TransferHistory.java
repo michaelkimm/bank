@@ -32,7 +32,7 @@ public class TransferHistory extends BaseEntity {
     @Column(length = 20)
     BigDecimal amountAfterWithdrawal;
 
-    @Column(length = 10)
+    @Column(length = 20)
     String memoToSender;
 
     @Column(length = 2)
@@ -47,7 +47,7 @@ public class TransferHistory extends BaseEntity {
     @Column(length = 20)
     BigDecimal amountAfterDeposit;
 
-    @Column(length = 10)
+    @Column(length = 20)
     String memoToReceiver;
 
     @Column

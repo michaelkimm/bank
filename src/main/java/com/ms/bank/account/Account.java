@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Version;
 import java.math.BigDecimal;
 
 @Entity
@@ -20,6 +21,9 @@ public class Account {
     private String accountNumber;
 
     private BigDecimal balance = BigDecimal.ZERO;
+
+    @Version
+    private Long version;
 
     protected Account() {}
 }

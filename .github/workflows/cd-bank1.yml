@@ -38,13 +38,13 @@ jobs:
       - name: connect ssh bank1
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.DEPLOYMENT_HOST }}
-          username: ${{ secrets.DEPLOYMENT_USERNAME }}
-          password: ${{ secrets.DEPLOYMENT_PASSWORD }}
+          host: ${{ secrets.DEPLOYMENT_HOST_BANK1 }}
+          username: ${{ secrets.DEPLOYMENT_USERNAME_BANK1 }}
+          password: ${{ secrets.DEPLOYMENT_PASSWORD_BANK1 }}
           port: ${{ secrets.DEPLOYMENT_PORT }}
           script: |
             docker pull ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
             docker stop ${{ secrets.APP_NAME }}
             docker rm ${{ secrets.APP_NAME }}
-            docker run --name ${{ secrets.APP_NAME }} -d -p 8080:8080 -e "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" -e "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
+            docker run --name ${{ secrets.APP_NAME }} -d -p 8080:8080 -e "DATABASE_HOST=${{ secrets.DATABASE_HOST_BANK1 }}" -e "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME_BANK1 }}" ${{ secrets.NCP_CONTAINER_REGISTRY }}/${{ secrets.APP_NAME }}
             docker image prune -f

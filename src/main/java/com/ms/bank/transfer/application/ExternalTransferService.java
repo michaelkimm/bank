@@ -52,9 +52,9 @@ public class ExternalTransferService {
 //        BigDecimal amountAfterWithdrawal = withdrawalAccount.getBalance().subtract(transferRequestDto.getTransferAmount());
 //        withdrawalAccount.setBalance(amountAfterWithdrawal);
 
-        // 이체 내역(시작) 쌓기
-        TransferHistory transferHistory = toTransferHistory(transferRequestDto, BigDecimal.ONE);
-        transferHistoryRepository.save(transferHistory);
+//        // 이체 내역(시작) 쌓기
+//        TransferHistory transferHistory = toTransferHistory(transferRequestDto, BigDecimal.ONE);
+//        transferHistoryRepository.save(transferHistory);
 
         // 이체 이벤트 쌓기
 //        ExternalTransferOutBox outBox = toExternalTransferOutBox(transferHistory);

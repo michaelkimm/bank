@@ -41,7 +41,7 @@ public class ExternalTransferService {
 
     public void executeTransfer(final TransferRequestDto transferRequestDto) {
         // 이체 전 검증 진행
-
+        Account account = accountRepository.findById(transferRequestDto.getWithdrawalAccountNumber()).orElseThrow();
 //        // 출금
 //        Account withdrawalAccount = accountRepository.findByAccountNumberForUpdate(transferRequestDto.getWithdrawalAccountNumber())
 //                .orElseThrow(() -> new RuntimeException("Account doesn't exist"));

@@ -26,11 +26,13 @@ public class TransferService {
 
     public void execute(final TransferRequestDto requestDto) {
 
-//        if (isInternalTransfer(requestDto.getWithdrawalBankId(), requestDto.getDepositBankId())) {
-//            internalTransferService.executeTransfer(requestDto);
-//        } else {
-//            externalTransferService.executeTransfer(requestDto);
-//        }
+        if (isInternalTransfer(requestDto.getWithdrawalBankId(), requestDto.getDepositBankId())) {
+            internalTransferService.executeTransfer(requestDto);
+        } else {
+            externalTransferService.executeTransfer(requestDto);
+        }
+
+
     }
 
     @Transactional

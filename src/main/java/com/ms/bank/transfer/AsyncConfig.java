@@ -21,15 +21,15 @@ public class AsyncConfig {
         return executor;
     }
 
-//    @Bean("depositProcessAsyncExecutor")
-//    public Executor depositProcessAsyncExecutor() {
-//        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-//        executor.setCorePoolSize(63);
-//        executor.setMaxPoolSize(63);
-//        executor.setThreadNamePrefix("d-p-service-a-t");
-//        executor.setDaemon(true);
-//        executor.initialize(); // 꼭 써줘야 한다.
-//        return executor;
-//    }
+    @Bean("depositProcessAsyncExecutor")
+    public Executor depositProcessAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(63);
+        executor.setMaxPoolSize(63);
+        executor.setThreadNamePrefix("d-p-service-a-t");
+        executor.setDaemon(true);
+        executor.initialize(); // 꼭 써줘야 한다.
+        return executor;
+    }
 }
 

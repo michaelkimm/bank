@@ -29,44 +29,43 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
     private final ExternalDepositService externalDepositService;
     private final ExternalTransferOutBoxRepository externalTransferOutBoxRepository;
-    private final ExternalTransferDepositOutBoxRepository externalTransferDepositOutBoxRepository;
     private final TransferHistoryRepository transferHistoryRepository;
-//    private final Executor depositProcessAsyncExecutor;
+    private final Executor depositProcessAsyncExecutor;
 
     private final ObjectMapper objectMapper;
 
-//    @Transactional
-////    @Async("transferSchedulerAsyncExecutor")
-////    @Scheduled(fixedDelay = 100)
-//    public void processTransferOutBoxMessage() {
-//
-//        List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAllExternalTransferOutBoxForUpdate();
-//        if (outboxList.isEmpty()) {
-//            return;
-//        }
-//
-//        log.info("처리 예정 이체 '요청' 아웃박스 개수: {}", outboxList.size());
-//
-//        List<CompletableFuture<Void>> transferDepositFutures = outboxList.stream()
-//                .map(this::getTransferHistory)
-//                .map(ExternalDepositRequestDto::of)
-//                .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.callExternalDepositRequest(externalDepositRequestDto), depositProcessAsyncExecutor))
-//                .collect(Collectors.toList());
-//
-//        CompletableFuture<Void> allFuture = CompletableFuture.allOf(transferDepositFutures.toArray(new CompletableFuture[0]));
-//
-//        try {
-//            allFuture.join();
-//            if (allFuture.isDone()) {
-//                externalTransferOutBoxRepository.deleteAll(outboxList);
-//                outboxList.stream()
-//                        .map(this::getTransferHistory)
-//                        .forEach(this::processTransferDeposit);
-//            }
-//        } catch (Exception e) {
-//            throw new RuntimeException("callExternalDepositRequest failed");
-//        }
-//    }
+    @Transactional
+//    @Async("transferSchedulerAsyncExecutor")
+    @Scheduled(fixedDelay = 100)
+    public void processTransferOutBoxMessage() {
+
+        List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAllExternalTransferOutBoxForUpdate();
+        if (outboxList.isEmpty()) {
+            return;
+        }
+
+        log.info("처리 예정 이체 '요청' 아웃박스 개수: {}", outboxList.size());
+
+        List<CompletableFuture<Void>> transferDepositFutures = outboxList.stream()
+                .map(this::getTransferHistory)
+                .map(ExternalDepositRequestDto::of)
+                .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.callExternalDepositRequest(externalDepositRequestDto), depositProcessAsyncExecutor))
+                .collect(Collectors.toList());
+
+        CompletableFuture<Void> allFuture = CompletableFuture.allOf(transferDepositFutures.toArray(new CompletableFuture[0]));
+
+        try {
+            allFuture.join();
+            if (allFuture.isDone()) {
+                externalTransferOutBoxRepository.deleteAll(outboxList);
+                outboxList.stream()
+                        .map(this::getTransferHistory)
+                        .forEach(this::processTransferDeposit);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("callExternalDepositRequest failed");
+        }
+    }
 
     private void processTransferDeposit(TransferHistory transferHistory) {
         transferHistory = transferHistoryRepository.findTransferHistoryByPublicTransferId(transferHistory.getPublicTransferId())

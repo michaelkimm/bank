@@ -63,7 +63,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
                         .forEach(this::processTransferDeposit);
             }
         } catch (Exception e) {
-            throw new RuntimeException("callExternalDepositRequest failed");
+            throw new RuntimeException(e.getMessage());
         }
     }
 

@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DATABASE_HOST:localhost}:3306/bank
+    url: jdbc:mysql://${DATABASE_HOST:localhost}:3306/bank?useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true&useSSL=false
     username: ${DATABASE_USERNAME:bank}
     password: kkk0926@@
 

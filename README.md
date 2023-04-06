@@ -13,7 +13,8 @@
 ![Mean Test Time 성능 개선 그래프](https://user-images.githubusercontent.com/50356726/230307459-b5503b8f-b5d0-426f-a0b5-dc47f51e1157.png)
 
 # **🌐아키텍처**
-- 아키텍처
+
+![인프라](https://user-images.githubusercontent.com/50356726/230328204-051035ba-a90c-4165-a49d-2160c56f62b8.jpg)
 
 # **🔧사용 기술**
 ## Backend

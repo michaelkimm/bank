@@ -1,8 +1,16 @@
-# bank
+# **bank**
  돈통 및 이체 서비스
 
-# 🤝소개
+# **🤝소개**
 - 돈통 및 이체 서비스
+
+# **🕐성능 개선**
+
+![이체 완료 소요 시간 성능 개선 그래프](https://user-images.githubusercontent.com/50356726/230307410-4bdad169-7e3d-447d-90f7-d126ab149f50.png)
+
+![TPS 성능 개선 그래프](https://user-images.githubusercontent.com/50356726/230307465-d8bdaa23-fc93-4446-965d-0739ba7f68bc.png)
+
+![Mean Test Time 성능 개선 그래프](https://user-images.githubusercontent.com/50356726/230307459-b5503b8f-b5d0-426f-a0b5-dc47f51e1157.png)
 
 # **🌐아키텍처**
 - 아키텍처

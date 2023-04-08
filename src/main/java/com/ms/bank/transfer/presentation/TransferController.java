@@ -33,7 +33,7 @@ public class TransferController {
 
     @PostMapping("/account/transfer/post")
     ResponseEntity<Void> transfer(@RequestBody TransferRequestDto transferRequestDto) {
-        transferService.execute(transferRequestDto);
+//        transferService.execute(transferRequestDto);
         return ResponseEntity
                 .ok()
                 .build();

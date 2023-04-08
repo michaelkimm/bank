@@ -72,7 +72,7 @@ public class ExternalDepositService {
         return result;
     }
 
-    @Async("serviceAsyncExecutor")
+    @Async("depositSuccessProcessAsyncExecutor")
     public void executeAllSuccessProcess(ExternalTransferDepositOutBox externalTransferDepositOutBox) {
         // 아웃 박스 lock 걸고 조회
         Optional<ExternalTransferDepositOutBox> outBoxForUpdate = externalTransferDepositOutBoxRepository.findExternalTransferDepositOutBoxForUpdate(externalTransferDepositOutBox.getId());
@@ -138,7 +138,7 @@ public class ExternalDepositService {
         }
     }
 
-    @Async("serviceAsyncExecutor")
+    @Async("depositProcessAsyncExecutor")
     public void executeAllRequestProcess(ExternalTransferOutBox outBox) {
 
         // 아웃 박스 select for update

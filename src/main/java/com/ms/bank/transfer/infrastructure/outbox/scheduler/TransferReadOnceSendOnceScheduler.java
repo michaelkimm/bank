@@ -11,6 +11,7 @@ import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBox;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBoxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +32,8 @@ public class TransferReadOnceSendOnceScheduler {
     private final ObjectMapper objectMapper;
 
     @Transactional
-//    @Async("transferSchedulerAsyncExecutor")
-//    @Scheduled(fixedDelay = 10)
+    @Async("transferSchedulerAsyncExecutor")
+    @Scheduled(fixedDelay = 10)
     public void processTransferOutBoxMessage() {
 
         Optional<ExternalTransferOutBox> outbox = externalTransferOutBoxRepository.findOneForUpdate();

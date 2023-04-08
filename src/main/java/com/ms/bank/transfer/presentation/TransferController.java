@@ -41,14 +41,14 @@ public class TransferController {
 
     @PostMapping("/account/transfer/deposit/post")
     ResponseEntity<Void> transferDeposit(@RequestBody ExternalDepositRequestDto externalDepositRequestDto) {
-        externalDepositService.store(externalDepositRequestDto);
-//        externalDepositService.executeTransferDeposit(externalDepositRequestDto);
+//        externalDepositService.store(externalDepositRequestDto);
+        externalDepositService.executeTransferDeposit(externalDepositRequestDto);
         return ResponseEntity
                 .ok()
                 .build();
     }
 
-
+    @Deprecated
     @PostMapping("/account/transfer/deposit/success/post")
     ResponseEntity<Void> transferDepositSuccess(@RequestBody ExternalDepositSuccessRequestDto externalDepositRequestDto) {
         transferService.processTransferDepositSuccess(externalDepositRequestDto);

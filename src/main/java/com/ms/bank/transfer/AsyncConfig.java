@@ -31,16 +31,5 @@ public class AsyncConfig {
         executor.initialize(); // 꼭 써줘야 한다.
         return executor;
     }
-
-    @Bean("depositSuccessProcessAsyncExecutor")
-    public Executor depositSuccessProcessAsyncExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(10);
-        executor.setThreadNamePrefix("d-p-service-a-t");
-        executor.setDaemon(true);
-        executor.initialize(); // 꼭 써줘야 한다.
-        return executor;
-    }
 }
 

@@ -32,6 +32,7 @@ public class TransferService {
         }
     }
 
+    @Deprecated
     @Transactional
     public void processTransferDepositSuccess(final ExternalDepositSuccessRequestDto externalDepositSuccessRequestDto) {
         TransferHistory transferHistory = transferHistoryRepository.findTransferHistoryByPublicTransferId(externalDepositSuccessRequestDto.getPublicTransferId())

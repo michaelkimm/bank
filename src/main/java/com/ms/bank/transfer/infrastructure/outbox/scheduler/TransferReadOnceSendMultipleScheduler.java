@@ -32,6 +32,7 @@ public class TransferReadOnceSendMultipleScheduler {
 
     private final ObjectMapper objectMapper;
 
+    @Deprecated
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
 //    @Scheduled(fixedDelay = 100)
@@ -62,6 +63,8 @@ public class TransferReadOnceSendMultipleScheduler {
             externalTransferOutBoxRepository.deleteAllById(outBoxCompletedList);
         }
     }
+
+    @Deprecated
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
 //    @Scheduled(fixedDelay = 100)

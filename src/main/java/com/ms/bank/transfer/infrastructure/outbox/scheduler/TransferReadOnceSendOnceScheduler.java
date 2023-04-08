@@ -31,6 +31,7 @@ public class TransferReadOnceSendOnceScheduler {
     private WebClient webClient = WebClient.create("http://localhost:8080");
     private final ObjectMapper objectMapper;
 
+    @Deprecated
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
 //    @Scheduled(fixedDelay = 10)
@@ -52,6 +53,7 @@ public class TransferReadOnceSendOnceScheduler {
         externalTransferOutBoxRepository.delete(outBoxForUpdate);
     }
 
+    @Deprecated
     @Transactional
 //    @Async("transferSchedulerAsyncExecutor")
 //    @Scheduled(fixedDelay = 10)

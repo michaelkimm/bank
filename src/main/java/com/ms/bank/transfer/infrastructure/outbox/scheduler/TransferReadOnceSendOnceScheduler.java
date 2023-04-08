@@ -53,8 +53,8 @@ public class TransferReadOnceSendOnceScheduler {
     }
 
     @Transactional
-//    @Async("transferSchedulerAsyncExecutor")
-//    @Scheduled(fixedDelay = 10)
+    @Async("transferSchedulerAsyncExecutor")
+    @Scheduled(fixedDelay = 10)
     public void processTransferDepositOutBoxMessage() {
 
         Optional<ExternalTransferDepositOutBox> outbox = externalTransferDepositOutBoxRepository.findOneForUpdate();

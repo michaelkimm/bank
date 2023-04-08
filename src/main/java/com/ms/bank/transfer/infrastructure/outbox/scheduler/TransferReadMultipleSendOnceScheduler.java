@@ -20,7 +20,7 @@ public class TransferReadMultipleSendOnceScheduler {
     private final ExternalTransferOutBoxRepository externalTransferOutBoxRepository;
     private final ExternalTransferDepositOutBoxRepository externalTransferDepositOutBoxRepository;
 
-//    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 1000)
     public void processTransferOutBoxMessage() {
 
         List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAll();
@@ -33,7 +33,7 @@ public class TransferReadMultipleSendOnceScheduler {
 
     }
 
-//    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 1000)
     public void processTransferDepositOutBoxMessage() {
 
         List<ExternalTransferDepositOutBox> outboxList = externalTransferDepositOutBoxRepository.findAll();

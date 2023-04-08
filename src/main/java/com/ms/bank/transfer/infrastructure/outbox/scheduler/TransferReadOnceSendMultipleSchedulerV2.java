@@ -35,16 +35,13 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     private final ObjectMapper objectMapper;
 
     @Transactional
-//    @Async("transferSchedulerAsyncExecutor")
-//    @Scheduled(fixedDelay = 100)
+    @Scheduled(fixedDelay = 100)
     public void processTransferOutBoxMessage() {
 
         List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAllExternalTransferOutBoxForUpdate();
         if (outboxList.isEmpty()) {
             return;
         }
-
-        log.info("처리 예정 이체 '요청' 아웃박스 개수: {}", outboxList.size());
 
         List<CompletableFuture<Void>> transferDepositFutures = outboxList.stream()
                 .map(this::getTransferHistory)

@@ -33,7 +33,7 @@ public class TransferController {
 
     @PostMapping("/account/transfer/post")
     ResponseEntity<Void> transfer(@RequestBody TransferRequestDto transferRequestDto) {
-//        transferService.execute(transferRequestDto);
+        transferService.execute(transferRequestDto);
         return ResponseEntity
                 .ok()
                 .build();
@@ -41,7 +41,6 @@ public class TransferController {
 
     @PostMapping("/account/transfer/deposit/post")
     ResponseEntity<Void> transferDeposit(@RequestBody ExternalDepositRequestDto externalDepositRequestDto) {
-//        externalDepositService.store(externalDepositRequestDto);
         externalDepositService.executeTransferDeposit(externalDepositRequestDto);
         return ResponseEntity
                 .ok()

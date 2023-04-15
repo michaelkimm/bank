@@ -35,7 +35,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     private final ObjectMapper objectMapper;
 
     @Transactional
-//    @Scheduled(fixedDelay = 100)
+    @Scheduled(fixedDelay = 100)
     public void processTransferOutBoxMessage() throws InterruptedException {
 
         List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAllExternalTransferOutBoxForUpdate();

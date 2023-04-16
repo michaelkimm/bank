@@ -7,14 +7,13 @@ import com.ms.bank.transfer.application.dto.ExternalDepositRequestDto;
 import com.ms.bank.transfer.domain.TransferHistory;
 import com.ms.bank.transfer.domain.TransferState;
 import com.ms.bank.transfer.infrastructure.TransferHistoryRepository;
-import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBox;
-import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBoxRepository;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBox;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBoxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
     private final ObjectMapper objectMapper;
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     @Scheduled(fixedDelay = 100)
     public void processTransferOutBoxMessage() throws InterruptedException {
 

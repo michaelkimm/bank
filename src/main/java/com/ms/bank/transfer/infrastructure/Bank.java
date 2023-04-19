@@ -8,8 +8,8 @@ import java.util.Arrays;
 @Getter
 public enum Bank {
 
-    BANK1("01", "http://27.96.135.122:8080"),
-    BANK2("02", "http://49.50.161.86:8080"),
+    BANK1("01", "http://118.67.130.213:8080"),
+    BANK2("02", "http://118.67.132.45:8080"),
     NO_BANK("00", "http://localhost:8080");
 
     private String bankId;

@@ -43,15 +43,14 @@ public class ExternalDepositService {
 
     private final ObjectMapper objectMapper;
 
+    @Deprecated
     public void store(ExternalDepositRequestDto externalDepositRequestDto) {
         ExternalTransferDepositOutBox outBox = toExternalTransferDepositOutBox(externalDepositRequestDto);
         externalTransferDepositOutBoxRepository.save(outBox);
     }
 
     public void executeTransferDeposit(ExternalDepositRequestDto externalDepositRequestDto) {
-//        Account account = accountRepository.findByAccountNumberForUpdate(externalDepositRequestDto.getDepositAccountNumber())
-//                .orElseThrow(() -> new RuntimeException("deposit account doesn't exist"));
-        Account account = accountRepository.findById(externalDepositRequestDto.getDepositAccountNumber())
+        Account account = accountRepository.findByAccountNumberForUpdate(externalDepositRequestDto.getDepositAccountNumber())
                 .orElseThrow(() -> new RuntimeException("deposit account doesn't exist"));
 
         BigDecimal depositAmountResult = deposit(externalDepositRequestDto, account);

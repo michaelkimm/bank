@@ -48,6 +48,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         log.info("OutBOx count = {}", outboxList.size());
 
         if (outboxList.isEmpty()) {
+            log.info("=============================");
             return;
         }
 

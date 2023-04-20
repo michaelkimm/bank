@@ -34,9 +34,8 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
     private final ObjectMapper objectMapper;
 
-//    @Transactional(isolation = Isolation.READ_COMMITTED)
-
-    @Transactional
+//    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     @Scheduled(fixedDelay = 100)
     public void processTransferOutBoxMessage() throws InterruptedException {
 

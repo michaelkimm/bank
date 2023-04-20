@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -33,14 +34,18 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
     private final ObjectMapper objectMapper;
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-//    @Transactional
-//    @Scheduled(fixedDelay = 100)
+//    @Transactional(isolation = Isolation.READ_COMMITTED)
+
+    @Transactional
+    @Scheduled(fixedDelay = 100)
     public void processTransferOutBoxMessage() throws InterruptedException {
 
         List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAllExternalTransferOutBoxForUpdate();
 
+        int startTime = LocalDateTime.now().getNano();
 //        Thread.sleep(1000000);
+        log.info("OutBOx count = {}", outboxList.size());
+
         if (outboxList.isEmpty()) {
             return;
         }
@@ -64,6 +69,11 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+
+        int endTime = LocalDateTime.now().getNano();
+        int gap = endTime - startTime;
+        log.info("gap = {}", gap);
+        log.info("=============================");
     }
 
     private void processTransferDeposit(TransferHistory transferHistory) {

@@ -42,13 +42,13 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
         List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAllExternalTransferOutBoxForUpdate();
 
-        int startTime = LocalDateTime.now().getNano();
+        long startTime = System.currentTimeMillis();
 //        Thread.sleep(1000000);
-        log.info("startTime = {}", startTime);
+        log.info("=============================");
+        log.info("startTime = {}", LocalDateTime.now());
         log.info("OutBOx count = {}", outboxList.size());
 
         if (outboxList.isEmpty()) {
-            log.info("=============================");
             return;
         }
 
@@ -72,10 +72,9 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             throw new RuntimeException(e.getMessage());
         }
 
-        int endTime = LocalDateTime.now().getNano();
-        int gap = endTime - startTime;
+        long endTime = System.currentTimeMillis();
+        long gap = endTime - startTime;
         log.info("gap = {}", gap);
-        log.info("=============================");
     }
 
     private void processTransferDeposit(TransferHistory transferHistory) {

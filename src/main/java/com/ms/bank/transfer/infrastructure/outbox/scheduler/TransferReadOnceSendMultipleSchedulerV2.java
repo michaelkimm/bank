@@ -44,6 +44,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
         int startTime = LocalDateTime.now().getNano();
 //        Thread.sleep(1000000);
+        log.info("startTime = {}", startTime);
         log.info("OutBOx count = {}", outboxList.size());
 
         if (outboxList.isEmpty()) {

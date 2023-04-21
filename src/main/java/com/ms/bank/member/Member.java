@@ -10,8 +10,9 @@ import javax.persistence.*;
 @Entity
 public class Member {
     @Id
+    @Column(name ="member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private long memberId;
 
     @Column(name = "name")
     private String name;

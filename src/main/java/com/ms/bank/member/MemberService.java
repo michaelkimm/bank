@@ -20,7 +20,7 @@ public class MemberService {
         memberRepository.save(member);
 
         // read
-        Member savedMember = memberRepository.findById(member.getId()).get();
+        Member savedMember = memberRepository.findById(member.getMemberId()).get();
         log.info("Same Entity ? : {}", member == savedMember);
         System.out.println("member: " + member.getClass());
         System.out.println("savedMember: " + savedMember.getClass());
@@ -33,13 +33,13 @@ public class MemberService {
         memberRepository.save(member);
 
         // update verify
-        savedMember = memberRepository.findById(member.getId()).get();
+        savedMember = memberRepository.findById(member.getMemberId()).get();
         log.info("member.name: {}\t savedMember.name: {}", member.getName(), savedMember.getName());
         log.info("Same Username ? : {}", member.getName().equals(savedMember.getName()));
 
         // delete
         memberRepository.delete(savedMember);
-        savedMember = memberRepository.findById(member.getId()).orElse(null);
+        savedMember = memberRepository.findById(member.getMemberId()).orElse(null);
         log.info("Entity is null ? : {}", savedMember);
     }
 }

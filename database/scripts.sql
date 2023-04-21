@@ -4,6 +4,7 @@ USE bank;
 create table account (
    account_number varchar(20) not null,
    balance decimal(19,2),
+   member_id bigint,
    primary key (account_number)
 ) engine=InnoDB;
 

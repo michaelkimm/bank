@@ -34,3 +34,4 @@
 - [#3 타행 이체 기능 성능 개선기, 속도(아웃박스 스케줄러 전략 선정 및 구현)](https://ujkim-game.tistory.com/92)
 - [#4 타행 이체 기능 성능 개선기, 속도(인프라 개선)](https://ujkim-game.tistory.com/93)
 - [#5 타행 이체 기능 성능 개선기, 속도(이체 입금 요청 API 처리 전략)](https://ujkim-game.tistory.com/94)
+- [#6 타행 이체 기능 성능 개선기, 속도(gap lock으로 인한 insert 병목 해결)](https://ujkim-game.tistory.com/96)

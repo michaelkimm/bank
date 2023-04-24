@@ -2,6 +2,8 @@ package com.ms.bank.transfer.application;
 
 import com.ms.bank.account.Account;
 import com.ms.bank.account.AccountRepository;
+import com.ms.bank.member.Member;
+import com.ms.bank.member.MemberRepository;
 import com.ms.bank.transfer.application.dto.ExternalDepositRequestDto;
 import com.ms.bank.transfer.domain.TransferState;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExternalDepositServiceTest {
 
     @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
     private AccountRepository accountRepository;
 
     @Autowired
@@ -35,7 +40,9 @@ class ExternalDepositServiceTest {
         int threadCount = 100;
         BigDecimal transferValue = BigDecimal.ONE;
 
-        Account depositAccount = new Account("2222", BigDecimal.valueOf(0));
+        Member jack = new Member("jack");
+        memberRepository.save(jack);
+        Account depositAccount = new Account("2222", BigDecimal.valueOf(0), jack);
         accountRepository.save(depositAccount);
 
         ExternalDepositRequestDto externalDepositRequestDto = new ExternalDepositRequestDto(
@@ -47,7 +54,7 @@ class ExternalDepositServiceTest {
                 "im sender",
                 "02",
                 depositAccount.getAccountNumber(),
-                "jack",
+                jack.getName(),
                 BigDecimal.ZERO,
                 "im receiver",
                 transferValue,
@@ -72,7 +79,10 @@ class ExternalDepositServiceTest {
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
-        Account depositAccount = new Account("2222", BigDecimal.valueOf(0));
+        Member jack = new Member("jack");
+        memberRepository.save(jack);
+
+        Account depositAccount = new Account("2222", BigDecimal.valueOf(0), jack);
         accountRepository.save(depositAccount);
 
         for (int i = 0; i < threadCount; i++) {
@@ -89,7 +99,7 @@ class ExternalDepositServiceTest {
                             "im sender",
                             "02",
                             finalDepositAccount.getAccountNumber(),
-                            "jack",
+                            jack.getName(),
                             BigDecimal.ZERO,
                             "im receiver",
                             transferValue,

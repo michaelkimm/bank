@@ -22,7 +22,7 @@
 
 # **🌐아키텍처**
 
-![image](https://user-images.githubusercontent.com/50356726/230811570-32674ff9-19e9-4d7c-a95d-f44a7e27f38c.png)
+![image](https://user-images.githubusercontent.com/50356726/234209917-4c9f0466-c827-4f37-8741-0dd782993bfa.png)
 
 # **🔧사용 기술**
 ## Backend

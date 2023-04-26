@@ -48,7 +48,7 @@ public class TransferController {
 
     @PostMapping("/account/transfer/deposit/post")
     ResponseEntity<Void> transferDeposit(@RequestBody ExternalDepositRequestDto externalDepositRequestDto) {
-        externalDepositService.executeTransferDeposit(externalDepositRequestDto);
+        externalDepositService.store(externalDepositRequestDto);
         return ResponseEntity
                 .ok()
                 .build();

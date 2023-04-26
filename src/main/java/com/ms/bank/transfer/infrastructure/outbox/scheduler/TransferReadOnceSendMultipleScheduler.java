@@ -79,6 +79,7 @@ public class TransferReadOnceSendMultipleScheduler {
         outboxList.forEach(outBox -> {
             ExternalDepositRequestDto externalDepositRequestDto = getExternalDepositRequestDto(outBox);
 
+            externalDepositService.executeTransferDeposit(externalDepositRequestDto);
             boolean result = externalDepositService.executeSuccessProcess(externalDepositRequestDto);
             if (result) {
                 outBoxCompletedList.add(outBox.getId());

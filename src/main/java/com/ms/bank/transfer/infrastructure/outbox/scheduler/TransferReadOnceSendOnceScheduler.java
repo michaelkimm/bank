@@ -68,6 +68,7 @@ public class TransferReadOnceSendOnceScheduler {
         ExternalDepositRequestDto externalDepositRequestDto = getExternalDepositRequestDto(outBoxForUpdate);
 
         // 입금 처리
+        externalDepositService.executeTransferDeposit(externalDepositRequestDto);
         boolean result = externalDepositService.executeSuccessProcess(externalDepositRequestDto);
         if (!result) {
             return;

@@ -12,10 +12,7 @@ import com.ms.bank.transfer.domain.TransferState;
 import com.ms.bank.transfer.infrastructure.Bank;
 import com.ms.bank.transfer.infrastructure.TransactionGuidGenerator;
 import com.ms.bank.transfer.infrastructure.TransferHistoryRepository;
-import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBox;
-import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBoxRepository;
-import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBox;
-import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBoxRepository;
+import com.ms.bank.transfer.infrastructure.outbox.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,7 +40,6 @@ public class ExternalDepositService {
 
     private final ObjectMapper objectMapper;
 
-    @Deprecated
     public void store(ExternalDepositRequestDto externalDepositRequestDto) {
         ExternalTransferDepositOutBox outBox = toExternalTransferDepositOutBox(externalDepositRequestDto);
         externalTransferDepositOutBoxRepository.save(outBox);
@@ -59,8 +55,6 @@ public class ExternalDepositService {
     }
 
     public boolean executeSuccessProcess(ExternalDepositRequestDto externalDepositRequestDto) {
-        // 이체 입금 진행
-        executeTransferDeposit(externalDepositRequestDto);
 
         // 입금 완료 응답 보내기
         Bank withdrawalBank = Bank.findByBankId(externalDepositRequestDto.getWithdrawalBankId());
@@ -81,6 +75,9 @@ public class ExternalDepositService {
         ExternalDepositRequestDto externalDepositRequestDto = getExternalDepositRequestDto(externalTransferDepositOutBox);
 
         // 입금 진행
+        executeTransferDeposit(externalDepositRequestDto);
+        
+        // 입금 완료 응답 보내기
         executeSuccessProcess(externalDepositRequestDto);
 
         // 아웃 박스 삭제

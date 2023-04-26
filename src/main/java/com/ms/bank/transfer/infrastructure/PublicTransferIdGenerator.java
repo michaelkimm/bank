@@ -14,7 +14,7 @@ public class PublicTransferIdGenerator {
 
     private static String serverId;
 
-    @Value("{server.id:20}")
+    @Value("${server.id}")
     public void setServerIdHashed(String value) {
         serverId = value;
     }

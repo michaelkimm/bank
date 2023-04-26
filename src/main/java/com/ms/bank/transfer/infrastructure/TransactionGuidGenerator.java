@@ -14,7 +14,7 @@ public class TransactionGuidGenerator {
 
     private static String serverId;
 
-    @Value("{server.id:20}")
+    @Value("${server.id}")
     public void setServerId(String value) {
         serverId = value;
     }

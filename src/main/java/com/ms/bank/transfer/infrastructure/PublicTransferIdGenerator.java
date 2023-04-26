@@ -1,20 +1,29 @@
 package com.ms.bank.transfer.infrastructure;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Component
 public class PublicTransferIdGenerator {
 
     private static AtomicInteger atomicInteger = new AtomicInteger();
 
-    private static final String serverIdHashed = "20";
+    private static String serverId;
+
+    @Value("{server.id:20}")
+    public void setServerIdHashed(String value) {
+        serverId = value;
+    }
 
     public static String getGuid(String fromBankId, String toBankId, String transactionId) {
         StringBuilder sb = new StringBuilder();
         String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         sb.append(time);
-        sb.append(serverIdHashed);
+        sb.append(serverId);
         sb.append(fromBankId);
         sb.append(toBankId);
         sb.append(transactionId);

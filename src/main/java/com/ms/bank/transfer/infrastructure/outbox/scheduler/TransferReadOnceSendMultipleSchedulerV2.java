@@ -87,7 +87,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
                 outboxList.stream()
                         .map(this::getExternalDepositRequestDto)
                         .map(this::toExternalTransferDepositSuccessResponseOutBox)
-                        .map(outbox -> externalTransferDepositSuccessResponseOutBoxRepository.save(outbox));
+                        .forEach(externalTransferDepositSuccessResponseOutBoxRepository::save);
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());

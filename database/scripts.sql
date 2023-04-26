@@ -53,3 +53,9 @@ create table transfer_history (
     withdrawal_member_name varchar(30),
     primary key (create_date, guid)
 ) engine=InnoDB;
+
+create table external_transfer_deposit_success_response_out_box (
+       id bigint not null,
+        pay_load longtext,
+        primary key (id)
+) engine=InnoDB;

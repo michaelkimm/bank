@@ -22,6 +22,13 @@ public class TransferController {
     @Value("spring.datasource.url")
     private String url;
 
+    @GetMapping
+    ResponseEntity<String> test() {
+        return ResponseEntity
+                .ok()
+                .body("test completed");
+    }
+
     @GetMapping("/account/transfer/get")
     ResponseEntity<Void> getTransferHistory() {
         log.info("transfer-get");

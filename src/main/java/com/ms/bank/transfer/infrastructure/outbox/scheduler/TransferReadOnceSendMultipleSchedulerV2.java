@@ -31,7 +31,9 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     private final ExternalTransferDepositOutBoxRepository externalTransferDepositOutBoxRepository;
     private final ExternalTransferDepositSuccessResponseOutBoxRepository externalTransferDepositSuccessResponseOutBoxRepository;
     private final TransferHistoryRepository transferHistoryRepository;
-    private final Executor depositProcessAsyncExecutor;
+    private final Executor transferDepositRequestAsyncExecutor;
+    private final Executor transferDepositProcessAsyncExecutor;
+    private final Executor transferDepositSuccessResponseAsyncExecutor;
 
     private final ObjectMapper objectMapper;
 
@@ -47,7 +49,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         List<CompletableFuture<Void>> transferDepositFutures = outboxList.stream()
                 .map(this::getTransferHistory)
                 .map(ExternalDepositRequestDto::of)
-                .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.callExternalDepositRequest(externalDepositRequestDto), depositProcessAsyncExecutor))
+                .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.callExternalDepositRequest(externalDepositRequestDto), transferDepositRequestAsyncExecutor))
                 .collect(Collectors.toList());
 
         CompletableFuture<Void> allFuture = CompletableFuture.allOf(transferDepositFutures.toArray(new CompletableFuture[0]));
@@ -66,7 +68,6 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     @Scheduled(fixedDelay = 100)
     public void processTransferDepositOutBoxMessage() {
         List<ExternalTransferDepositOutBox> outboxList = externalTransferDepositOutBoxRepository.findAllExternalTransferDepositOutBoxForUpdate();
-        log.info("outboxList size: {}", outboxList.size());
         if (outboxList.isEmpty()) {
             return;
         }
@@ -74,7 +75,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         // 이체 입금 순차 처리
         List<CompletableFuture<Void>> transferDepositFutures = outboxList.stream()
                 .map(this::getExternalDepositRequestDto)
-                .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.executeTransferDeposit(externalDepositRequestDto), depositProcessAsyncExecutor))
+                .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.executeTransferDeposit(externalDepositRequestDto), transferDepositProcessAsyncExecutor))
                 .collect(Collectors.toList());
 
         CompletableFuture<Void> allFuture = CompletableFuture.allOf(transferDepositFutures.toArray(new CompletableFuture[0]));
@@ -91,6 +92,28 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Scheduled(fixedDelay = 100)
+    public void processTransferDepositSuccessResponseOutBoxMessage() {
+        List<ExternalTransferDepositSuccessResponseOutBox> outboxList = externalTransferDepositSuccessResponseOutBoxRepository.findAllExternalTransferDepositSuccessResponseOutBoxForUpdate();
+        if (outboxList.isEmpty()) {
+            return;
+        }
+
+        List<CompletableFuture<Boolean>> transferDepositFutures = outboxList.stream()
+                .map(this::getExternalDepositRequestDto)
+                .map(externalDepositRequestDto -> CompletableFuture.supplyAsync(() -> externalDepositService.executeSuccessProcess(externalDepositRequestDto), transferDepositSuccessResponseAsyncExecutor))
+                .collect(Collectors.toList());
+
+        List<Boolean> transferDepositResults = transferDepositFutures.stream()
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
+
+        if (!transferDepositResults.contains(false)) {
+            externalTransferDepositSuccessResponseOutBoxRepository.deleteAll(outboxList);
         }
     }
 
@@ -123,6 +146,16 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     }
 
     private ExternalDepositRequestDto getExternalDepositRequestDto(ExternalTransferDepositOutBox outBoxForUpdate) {
+        ExternalDepositRequestDto externalDepositRequestDto = null;
+        try {
+            externalDepositRequestDto = objectMapper.readValue(outBoxForUpdate.getPayLoad(), ExternalDepositRequestDto.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return externalDepositRequestDto;
+    }
+
+    private ExternalDepositRequestDto getExternalDepositRequestDto(ExternalTransferDepositSuccessResponseOutBox outBoxForUpdate) {
         ExternalDepositRequestDto externalDepositRequestDto = null;
         try {
             externalDepositRequestDto = objectMapper.readValue(outBoxForUpdate.getPayLoad(), ExternalDepositRequestDto.class);

@@ -21,12 +21,34 @@ public class AsyncConfig {
         return executor;
     }
 
-    @Bean("depositProcessAsyncExecutor")
-    public Executor depositProcessAsyncExecutor() {
+    @Bean("transferDepositRequestAsyncExecutor")
+    public Executor transferDepositRequestAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(10);
         executor.setMaxPoolSize(10);
-        executor.setThreadNamePrefix("d-p-service-a-t");
+        executor.setThreadNamePrefix("t-d-r-service-a-t");
+        executor.setDaemon(true);
+        executor.initialize(); // 꼭 써줘야 한다.
+        return executor;
+    }
+
+    @Bean("transferDepositProcessAsyncExecutor")
+    public Executor transferDepositProcessAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(10);
+        executor.setThreadNamePrefix("t-d-p-service-a-t");
+        executor.setDaemon(true);
+        executor.initialize(); // 꼭 써줘야 한다.
+        return executor;
+    }
+
+    @Bean("transferDepositSuccessResponseAsyncExecutor")
+    public Executor transferDepositSuccessResponseAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(10);
+        executor.setThreadNamePrefix("t-d-s-r-service-a-t");
         executor.setDaemon(true);
         executor.initialize(); // 꼭 써줘야 한다.
         return executor;

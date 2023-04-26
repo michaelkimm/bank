@@ -66,6 +66,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     @Scheduled(fixedDelay = 100)
     public void processTransferDepositOutBoxMessage() {
         List<ExternalTransferDepositOutBox> outboxList = externalTransferDepositOutBoxRepository.findAllExternalTransferDepositOutBoxForUpdate();
+        log.info("outboxList size: {}", outboxList.size());
         if (outboxList.isEmpty()) {
             return;
         }

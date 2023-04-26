@@ -73,8 +73,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
         // 이체 입금 순차 처리
         List<CompletableFuture<Void>> transferDepositFutures = outboxList.stream()
-                .map(this::getTransferHistory)
-                .map(ExternalDepositRequestDto::of)
+                .map(this::getExternalDepositRequestDto)
                 .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.executeTransferDeposit(externalDepositRequestDto), depositProcessAsyncExecutor))
                 .collect(Collectors.toList());
 
@@ -86,8 +85,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             if (allFuture.isDone()) {
                 externalTransferDepositOutBoxRepository.deleteAll(outboxList);
                 outboxList.stream()
-                        .map(this::getTransferHistory)
-                        .map(ExternalDepositRequestDto::of)
+                        .map(this::getExternalDepositRequestDto)
                         .map(this::toExternalTransferDepositSuccessResponseOutBox)
                         .map(outbox -> externalTransferDepositSuccessResponseOutBoxRepository.save(outbox));
             }
@@ -114,16 +112,6 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         return transferHistory;
     }
 
-    private TransferHistory getTransferHistory(ExternalTransferDepositOutBox outBoxForUpdate) {
-        TransferHistory transferHistory = null;
-        try {
-            transferHistory = objectMapper.readValue(outBoxForUpdate.getPayLoad(), TransferHistory.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-        return transferHistory;
-    }
-
     private ExternalTransferDepositSuccessResponseOutBox toExternalTransferDepositSuccessResponseOutBox(ExternalDepositRequestDto externalDepositRequestDto) {
 
         try {
@@ -132,5 +120,15 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    private ExternalDepositRequestDto getExternalDepositRequestDto(ExternalTransferDepositOutBox outBoxForUpdate) {
+        ExternalDepositRequestDto externalDepositRequestDto = null;
+        try {
+            externalDepositRequestDto = objectMapper.readValue(outBoxForUpdate.getPayLoad(), ExternalDepositRequestDto.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return externalDepositRequestDto;
     }
 }

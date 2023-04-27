@@ -14,7 +14,7 @@ class SchedulerConfig implements SchedulingConfigurer {
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
 
-        threadPoolTaskScheduler.setPoolSize(2);
+        threadPoolTaskScheduler.setPoolSize(3);
         threadPoolTaskScheduler.setThreadGroupName("scheduler thread pool");
         threadPoolTaskScheduler.setThreadNamePrefix("s-t-");
         threadPoolTaskScheduler.initialize();

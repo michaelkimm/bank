@@ -9,7 +9,7 @@ import java.util.Arrays;
 public enum Bank {
 
     BANK1("01", "http://slb-17013473.ncloudslb.com"),
-    BANK2("02", "http://49.50.173.38:8080"),
+    BANK2("02", "http://slb-17031461.ncloudslb.com"),
 //    BANK1("01", "http://localhost:8080"),
 //    BANK2("02", "http://localhost:8080"),
     NO_BANK("00", "http://localhost:8080");

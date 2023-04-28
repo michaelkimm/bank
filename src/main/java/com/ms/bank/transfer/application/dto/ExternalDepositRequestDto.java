@@ -1,7 +1,11 @@
 package com.ms.bank.transfer.application.dto;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ms.bank.transfer.domain.TransferHistory;
 import com.ms.bank.transfer.domain.TransferState;
+import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBox;
+import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositSuccessResponseOutBox;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -30,6 +34,8 @@ public class ExternalDepositRequestDto {
     private String publicTransferId;
     private TransferState state;
 
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
     public static ExternalDepositRequestDto of(TransferHistory transferHistory) {
         return new ExternalDepositRequestDto(
                 transferHistory.getDateAndGUID().getCreateDate(),
@@ -49,5 +55,25 @@ public class ExternalDepositRequestDto {
                 transferHistory.getPublicTransferId(),
                 transferHistory.getState()
                 );
+    }
+
+    public static ExternalDepositRequestDto of(ExternalTransferDepositOutBox outBoxForUpdate) {
+        ExternalDepositRequestDto externalDepositRequestDto = null;
+        try {
+            externalDepositRequestDto = objectMapper.readValue(outBoxForUpdate.getPayLoad(), ExternalDepositRequestDto.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return externalDepositRequestDto;
+    }
+
+    public static ExternalDepositRequestDto of(ExternalTransferDepositSuccessResponseOutBox outBoxForUpdate) {
+        ExternalDepositRequestDto externalDepositRequestDto = null;
+        try {
+            externalDepositRequestDto = objectMapper.readValue(outBoxForUpdate.getPayLoad(), ExternalDepositRequestDto.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return externalDepositRequestDto;
     }
 }

@@ -5,16 +5,21 @@ spring:
     username: root
     password: root
 
+    hikari:
+      maximumPoolSize: 20
+      poolName: HikariCP
+
   jpa:
 #    open-in-view: true
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-#        format_sql: true
+        format_sql: true
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-#    show-sql: true
+    show-sql: true
 
   jackson:
     serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
+

@@ -2,12 +2,14 @@ package com.ms.bank.transfer.infrastructure.outbox.scheduler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ms.bank.common.utils.ObjectMapperUtil;
 import com.ms.bank.transfer.application.ExternalDepositService;
 import com.ms.bank.transfer.application.dto.ExternalDepositRequestDto;
 import com.ms.bank.transfer.domain.TransferHistory;
 import com.ms.bank.transfer.domain.TransferState;
 import com.ms.bank.transfer.infrastructure.TransferHistoryRepository;
 import com.ms.bank.transfer.infrastructure.outbox.*;
+import com.ms.bank.transfer.infrastructure.outbox.event.ExternalTransferWithdrawalEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 public class TransferReadOnceSendMultipleSchedulerV2 {
 
     private final ExternalDepositService externalDepositService;
-    private final ExternalTransferOutBoxRepository externalTransferOutBoxRepository;
+    private final OutBoxRepository outBoxRepository;
     private final ExternalTransferDepositOutBoxRepository externalTransferDepositOutBoxRepository;
     private final ExternalTransferDepositSuccessResponseOutBoxRepository externalTransferDepositSuccessResponseOutBoxRepository;
     private final TransferHistoryRepository transferHistoryRepository;
@@ -41,13 +42,14 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     @Scheduled(fixedDelay = 100)
     public void processTransferOutBoxMessage() {
 
-        List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAllExternalTransferOutBoxForUpdate();
+        List<OutBox> outboxList = outBoxRepository.findOutBoxesByAggregateTypeEqualsAndProcessedIsFalse(ExternalTransferWithdrawalEvent.class.getSimpleName());
         if (outboxList.isEmpty()) {
             return;
         }
 
         List<CompletableFuture<Void>> transferDepositFutures = outboxList.stream()
-                .map(this::getTransferHistory)
+                .map(this::getEventData)
+                .map(ExternalTransferWithdrawalEvent::toTransferHistory)
                 .map(ExternalDepositRequestDto::of)
                 .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.callExternalDepositRequest(externalDepositRequestDto), transferDepositRequestAsyncExecutor))
                 .collect(Collectors.toList());
@@ -57,7 +59,8 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         try {
             allFuture.join();
             if (allFuture.isDone()) {
-                externalTransferOutBoxRepository.deleteAll(outboxList);
+                outboxList.stream()
+                        .forEach(outBox -> outBox.setProcessed(Boolean.TRUE));
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -123,6 +126,15 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
                 .orElseThrow(() -> new RuntimeException("transfer history does not exist"));
         transferHistory.setState(TransferState.FINISHED);
         transferHistoryRepository.save(transferHistory);
+    }
+
+    private ExternalTransferWithdrawalEvent getEventData(OutBox outBox) {
+        try {
+            ExternalTransferWithdrawalEvent event = ObjectMapperUtil.getMapper().readValue(outBox.getPayload(), ExternalTransferWithdrawalEvent.class);
+            return event;
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     private TransferHistory getTransferHistory(ExternalTransferOutBox outBoxForUpdate) {

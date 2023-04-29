@@ -14,8 +14,12 @@ import com.ms.bank.transfer.infrastructure.TransactionGuidGenerator;
 import com.ms.bank.transfer.infrastructure.TransferHistoryRepository;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBox;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBoxRepository;
+import com.ms.bank.transfer.infrastructure.outbox.event.ExternalTransferWithdrawalEvent;
+import com.ms.bank.transfer.infrastructure.outbox.event.ExternalTransferWithdrawalEventBuilder;
+import com.ms.bank.transfer.infrastructure.outbox.event.OutBoxEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -34,7 +38,8 @@ public class ExternalTransferService {
 
     private final AccountRepository accountRepository;
     private final TransferHistoryRepository transferHistoryRepository;
-    private final ExternalTransferOutBoxRepository externalTransferOutBoxRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
+    private final ExternalTransferWithdrawalEventBuilder externalTransferWithdrawalEventBuilder;
 
     private final String externalTransferId = "01";
     private final ObjectMapper objectMapper;
@@ -56,8 +61,12 @@ public class ExternalTransferService {
         transferHistoryRepository.save(transferHistory);
 
         // 이체 이벤트 쌓기
-        ExternalTransferOutBox outBox = toExternalTransferOutBox(transferHistory);
-        externalTransferOutBoxRepository.save(outBox);
+//        ExternalTransferOutBox outBox = toExternalTransferOutBox(transferHistory);
+//        externalTransferOutBoxRepository.save(outBox);
+        // 이체 내역 to event
+        // publish event
+        OutBoxEvent outBoxEvent = externalTransferWithdrawalEventBuilder.createOutBoxEvent(ExternalTransferWithdrawalEvent.of(transferHistory));
+        applicationEventPublisher.publishEvent(outBoxEvent);
     }
 
     private boolean checkIfBalanceIsEnough(TransferRequestDto transferRequestDto, Account withdrawalAccount) {
@@ -84,16 +93,6 @@ public class ExternalTransferService {
                 PublicTransferIdGenerator.getGuid(transferRequestDto.getWithdrawalBankId(), transferRequestDto.getDepositBankId(), externalTransferId),
                 TransferState.CREATED
         );
-    }
-
-    private ExternalTransferOutBox toExternalTransferOutBox(TransferHistory transferHistory) {
-
-        try {
-            String value = objectMapper.writeValueAsString(transferHistory);
-            return new ExternalTransferOutBox(value);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage());
-        }
     }
 }
 

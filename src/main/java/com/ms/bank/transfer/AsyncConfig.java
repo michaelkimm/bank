@@ -26,7 +26,7 @@ public class AsyncConfig {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(10);
         executor.setMaxPoolSize(10);
-        executor.setThreadNamePrefix("t-d-r-service-a-t");
+        executor.setThreadNamePrefix("t-d-r-a-t");
         executor.setDaemon(true);
         executor.initialize(); // 꼭 써줘야 한다.
         return executor;
@@ -37,7 +37,7 @@ public class AsyncConfig {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(10);
         executor.setMaxPoolSize(10);
-        executor.setThreadNamePrefix("t-d-p-service-a-t");
+        executor.setThreadNamePrefix("t-d-p-a-t");
         executor.setDaemon(true);
         executor.initialize(); // 꼭 써줘야 한다.
         return executor;
@@ -48,7 +48,7 @@ public class AsyncConfig {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(10);
         executor.setMaxPoolSize(10);
-        executor.setThreadNamePrefix("t-d-s-r-service-a-t");
+        executor.setThreadNamePrefix("t-d-s-r-a-t");
         executor.setDaemon(true);
         executor.initialize(); // 꼭 써줘야 한다.
         return executor;

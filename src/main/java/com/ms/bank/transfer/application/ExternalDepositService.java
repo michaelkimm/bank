@@ -29,7 +29,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
-//@Slf4j
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Component
@@ -53,7 +53,7 @@ public class ExternalDepositService {
 //        Account account = accountRepository.findByAccountNumberForUpdate(externalDepositRequestDto.getDepositAccountNumber())
 //                .orElseThrow(() -> new RuntimeException("deposit account doesn't exist"));
 
-        Account account = accountRepository.findById(externalDepositRequestDto.getDepositAccountNumber())
+        Account account = accountRepository.findByAccountNumber(externalDepositRequestDto.getDepositAccountNumber())
                 .orElseThrow(() -> new RuntimeException("haha"));
 //        log.info("got lock");
 

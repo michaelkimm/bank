@@ -15,8 +15,8 @@ public class AsyncConfig {
     @Bean("transferSchedulerAsyncExecutor")
     public Executor transferSchedulerAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(5);
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(10);
         executor.setThreadNamePrefix("schedule-a-t");
         executor.initialize(); // 꼭 써줘야 한다.
         return executor;
@@ -25,8 +25,8 @@ public class AsyncConfig {
     @Bean("transferDepositRequestAsyncExecutor")
     public Executor transferDepositRequestAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(30);
-        executor.setMaxPoolSize(30);
+        executor.setCorePoolSize(50);
+        executor.setMaxPoolSize(50);
         executor.setThreadNamePrefix("t-d-r-a-t");
         executor.setDaemon(true);
         executor.initialize(); // 꼭 써줘야 한다.

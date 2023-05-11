@@ -2,17 +2,20 @@ package com.ms.bank.transfer.application.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ms.bank.transfer.domain.TransferHistory;
 import com.ms.bank.transfer.domain.TransferState;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositOutBox;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferDepositSuccessResponseOutBox;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Getter
 public class ExternalDepositRequestDto {
@@ -34,7 +37,7 @@ public class ExternalDepositRequestDto {
     private String publicTransferId;
     private TransferState state;
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     public static ExternalDepositRequestDto of(TransferHistory transferHistory) {
         return new ExternalDepositRequestDto(

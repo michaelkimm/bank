@@ -14,6 +14,7 @@ import com.ms.bank.transfer.infrastructure.TransactionGuidGenerator;
 import com.ms.bank.transfer.infrastructure.TransferHistoryRepository;
 import com.ms.bank.transfer.infrastructure.outbox.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
@@ -28,6 +29,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
+//@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Component
@@ -46,9 +48,12 @@ public class ExternalDepositService {
         externalTransferDepositOutBoxRepository.save(outBox);
     }
 
+//    @Async
     public void executeTransferDeposit(ExternalDepositRequestDto externalDepositRequestDto) {
         Account account = accountRepository.findByAccountNumberForUpdate(externalDepositRequestDto.getDepositAccountNumber())
                 .orElseThrow(() -> new RuntimeException("deposit account doesn't exist"));
+
+//        log.info("got lock");
 
         BigDecimal depositAmountResult = deposit(externalDepositRequestDto, account);
 

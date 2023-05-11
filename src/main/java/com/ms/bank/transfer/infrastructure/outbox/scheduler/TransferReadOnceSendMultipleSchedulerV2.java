@@ -77,7 +77,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         if (outboxList.isEmpty()) {
             return;
         }
-        log.info("TransferDepositOutBoxCnt: " + String.valueOf(outboxList.size()));
+        log.info("2 TransferDepositOutBoxCnt: " + String.valueOf(outboxList.size()));
 
         // 이체 입금 처리
         LinkedList<CompletableFuture<Void>> futureLinkedList = new LinkedList<>();
@@ -95,7 +95,6 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             }
             
             // is done 추가 필요
-
             // 이체 입금 이벤트 삭제, 이체 입금 완료 이벤트 적재
             if (futureCnt == 0) {
                 externalTransferDepositOutBoxRepository.deleteAll(outboxList);
@@ -103,10 +102,11 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+//        log.info("2 TransferDepositOutBox end");
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-//    @Scheduled(fixedDelay = 100)
+    @Scheduled(fixedDelay = 100)
     public void processTransferDepositSuccessResponseOutBoxMessage() {
         List<ExternalTransferDepositSuccessResponseOutBox> outboxList = externalTransferDepositSuccessResponseOutBoxRepository.findAllExternalTransferDepositSuccessResponseOutBoxForUpdate();
         if (outboxList.isEmpty()) {

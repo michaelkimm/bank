@@ -16,31 +16,8 @@ public class MemberService {
     @Transactional
     public void addMember() {
         // create
-        Member member = new Member("beforeName");
+        Member member = new Member("jack");
         memberRepository.save(member);
-
-        // read
-        Member savedMember = memberRepository.findById(member.getMemberId()).get();
-        log.info("Same Entity ? : {}", member == savedMember);
-        System.out.println("member: " + member.getClass());
-        System.out.println("savedMember: " + savedMember.getClass());
-
-        // update
-        String newUsername = "kitty";
-        member.setName(newUsername);
-//        savedMember.setName(newUsername);
-        System.out.println(savedMember);
-        memberRepository.save(member);
-
-        // update verify
-        savedMember = memberRepository.findById(member.getMemberId()).get();
-        log.info("member.name: {}\t savedMember.name: {}", member.getName(), savedMember.getName());
-        log.info("Same Username ? : {}", member.getName().equals(savedMember.getName()));
-
-        // delete
-        memberRepository.delete(savedMember);
-        savedMember = memberRepository.findById(member.getMemberId()).orElse(null);
-        log.info("Entity is null ? : {}", savedMember);
     }
 }
 

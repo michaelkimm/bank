@@ -44,6 +44,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         if (outboxList.isEmpty()) {
             return;
         }
+        log.info("TransferOutBoxCnt: " + String.valueOf(outboxList.size()));
 
         LinkedList<CompletableFuture<Void>> futureLinkedList = new LinkedList<>();
         for (ExternalTransferOutBox outBox : outboxList) {
@@ -76,8 +77,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         if (outboxList.isEmpty()) {
             return;
         }
-
-        log.info(String.valueOf(outboxList.size()));
+        log.info("TransferDepositOutBoxCnt: " + String.valueOf(outboxList.size()));
 
         // 이체 입금 처리
         LinkedList<CompletableFuture<Void>> futureLinkedList = new LinkedList<>();
@@ -112,6 +112,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         if (outboxList.isEmpty()) {
             return;
         }
+        log.info("TransferDepositSuccessOutBoxCnt: " + String.valueOf(outboxList.size()));
 
         LinkedList<CompletableFuture<Boolean>> futureLinkedList = new LinkedList<>();
         for (ExternalTransferDepositSuccessResponseOutBox outBox : outboxList) {

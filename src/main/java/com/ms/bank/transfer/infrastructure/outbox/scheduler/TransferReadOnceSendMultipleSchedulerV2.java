@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -85,10 +84,10 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             // 이체 입금 이벤트 삭제, 이체 입금 완료 이벤트 적재
             if (allFuture.isDone()) {
                 externalTransferDepositOutBoxRepository.deleteAll(outboxList);
-                outboxList.stream()
-                        .map(ExternalDepositRequestDto::of)
-                        .map(this::toExternalTransferDepositSuccessResponseOutBox)
-                        .forEach(externalTransferDepositSuccessResponseOutBoxRepository::save);
+//                outboxList.stream()
+//                        .map(ExternalDepositRequestDto::of)
+//                        .map(this::toExternalTransferDepositSuccessResponseOutBox)
+//                        .forEach(externalTransferDepositSuccessResponseOutBoxRepository::save);
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -135,13 +134,13 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         return transferHistory;
     }
 
-    private ExternalTransferDepositSuccessResponseOutBox toExternalTransferDepositSuccessResponseOutBox(ExternalDepositRequestDto externalDepositRequestDto) {
-
-        try {
-            String value = objectMapper.writeValueAsString(externalDepositRequestDto);
-            return new ExternalTransferDepositSuccessResponseOutBox(value);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e.getMessage());
-        }
-    }
+//    private ExternalTransferDepositSuccessResponseOutBox toExternalTransferDepositSuccessResponseOutBox(ExternalDepositRequestDto externalDepositRequestDto) {
+//
+//        try {
+//            String value = objectMapper.writeValueAsString(externalDepositRequestDto);
+//            return new ExternalTransferDepositSuccessResponseOutBox(value);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
+//    }
 }

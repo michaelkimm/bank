@@ -35,6 +35,7 @@ public class ExternalDepositService {
 
     private final ExternalTransferOutBoxRepository externalTransferOutBoxRepository;
     private final ExternalTransferDepositOutBoxRepository externalTransferDepositOutBoxRepository;
+    private final ExternalTransferDepositSuccessResponseOutBoxRepository externalTransferDepositSuccessResponseOutBoxRepository;
     private final AccountRepository accountRepository;
     private final TransferHistoryRepository transferHistoryRepository;
 
@@ -52,6 +53,9 @@ public class ExternalDepositService {
         BigDecimal depositAmountResult = deposit(externalDepositRequestDto, account);
 
         saveTransferHistory(externalDepositRequestDto, depositAmountResult);
+
+        ExternalTransferDepositSuccessResponseOutBox outBox = toExternalTransferDepositSuccessResponseOutBox(externalDepositRequestDto);
+        externalTransferDepositSuccessResponseOutBoxRepository.save(outBox);
     }
 
     public boolean executeSuccessProcess(ExternalDepositRequestDto externalDepositRequestDto) {
@@ -206,5 +210,15 @@ public class ExternalDepositService {
             return false;
         }
         return true;
+    }
+
+    private ExternalTransferDepositSuccessResponseOutBox toExternalTransferDepositSuccessResponseOutBox(ExternalDepositRequestDto externalDepositRequestDto) {
+
+        try {
+            String value = objectMapper.writeValueAsString(externalDepositRequestDto);
+            return new ExternalTransferDepositSuccessResponseOutBox(value);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

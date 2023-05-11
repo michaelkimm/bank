@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,17 +45,23 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             return;
         }
 
-        List<CompletableFuture<Void>> transferDepositFutures = outboxList.stream()
-                .map(this::getTransferHistory)
-                .map(ExternalDepositRequestDto::of)
-                .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.callExternalDepositRequest(externalDepositRequestDto), transferDepositRequestAsyncExecutor))
-                .collect(Collectors.toList());
-
-        CompletableFuture<Void> allFuture = CompletableFuture.allOf(transferDepositFutures.toArray(new CompletableFuture[0]));
+        LinkedList<CompletableFuture<Void>> futureLinkedList = new LinkedList<>();
+        for (ExternalTransferOutBox outBox : outboxList) {
+            TransferHistory transferHistory = getTransferHistory(outBox);
+            ExternalDepositRequestDto requestDto = ExternalDepositRequestDto.of(transferHistory);
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> externalDepositService.callExternalDepositRequest(requestDto), transferDepositRequestAsyncExecutor);
+            futureLinkedList.add(future);
+        }
 
         try {
-            allFuture.join();
-            if (allFuture.isDone()) {
+            int futureCnt = futureLinkedList.size();
+            for (CompletableFuture<Void> future : futureLinkedList) {
+                future.join();
+                futureCnt -= 1;
+            }
+            // is done 추가 필요
+            
+            if (futureCnt == 0) {
                 externalTransferOutBoxRepository.deleteAll(outboxList);
             }
         } catch (Exception e) {
@@ -71,23 +77,28 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             return;
         }
 
-        // 이체 입금 순차 처리
-        List<CompletableFuture<Void>> transferDepositFutures = outboxList.stream()
-                .map(ExternalDepositRequestDto::of)
-                .map(externalDepositRequestDto -> CompletableFuture.runAsync(() -> externalDepositService.executeTransferDeposit(externalDepositRequestDto), transferDepositProcessAsyncExecutor))
-                .collect(Collectors.toList());
+        log.info(String.valueOf(outboxList.size()));
 
-        CompletableFuture<Void> allFuture = CompletableFuture.allOf(transferDepositFutures.toArray(new CompletableFuture[0]));
+        // 이체 입금 처리
+        LinkedList<CompletableFuture<Void>> futureLinkedList = new LinkedList<>();
+        for (ExternalTransferDepositOutBox outBox : outboxList) {
+            ExternalDepositRequestDto depositRequestDto = ExternalDepositRequestDto.of(outBox);
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> externalDepositService.executeTransferDeposit(depositRequestDto), transferDepositProcessAsyncExecutor);
+            futureLinkedList.add(future);
+        }
 
         try {
-            allFuture.join();
+            int futureCnt = futureLinkedList.size();
+            for (CompletableFuture<Void> future : futureLinkedList) {
+                future.join();
+                futureCnt -= 1;
+            }
+            
+            // is done 추가 필요
+
             // 이체 입금 이벤트 삭제, 이체 입금 완료 이벤트 적재
-            if (allFuture.isDone()) {
+            if (futureCnt == 0) {
                 externalTransferDepositOutBoxRepository.deleteAll(outboxList);
-//                outboxList.stream()
-//                        .map(ExternalDepositRequestDto::of)
-//                        .map(this::toExternalTransferDepositSuccessResponseOutBox)
-//                        .forEach(externalTransferDepositSuccessResponseOutBoxRepository::save);
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
@@ -102,17 +113,26 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             return;
         }
 
-        List<CompletableFuture<Boolean>> transferDepositFutures = outboxList.stream()
-                .map(ExternalDepositRequestDto::of)
-                .map(externalDepositRequestDto -> CompletableFuture.supplyAsync(() -> externalDepositService.executeSuccessProcess(externalDepositRequestDto), transferDepositSuccessResponseAsyncExecutor))
-                .collect(Collectors.toList());
+        LinkedList<CompletableFuture<Boolean>> futureLinkedList = new LinkedList<>();
+        for (ExternalTransferDepositSuccessResponseOutBox outBox : outboxList) {
+            ExternalDepositRequestDto requestDto = ExternalDepositRequestDto.of(outBox);
+            CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> externalDepositService.executeSuccessProcess(requestDto), transferDepositSuccessResponseAsyncExecutor);
+            futureLinkedList.add(future);
+        }
 
-        List<Boolean> transferDepositResults = transferDepositFutures.stream()
-                .map(CompletableFuture::join)
-                .collect(Collectors.toList());
+        try {
+            int futureCnt = futureLinkedList.size();
+            for (CompletableFuture<Boolean> future : futureLinkedList) {
+                future.join();
+                futureCnt -= 1;
+            }
+            // is done 추가 필요
 
-        if (!transferDepositResults.contains(false)) {
-            externalTransferDepositSuccessResponseOutBoxRepository.deleteAll(outboxList);
+            if (futureCnt == 0) {
+                externalTransferDepositSuccessResponseOutBoxRepository.deleteAll(outboxList);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 

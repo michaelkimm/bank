@@ -71,7 +71,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         }
     }
 
-//    @Async(value = "transferSchedulerAsyncExecutor")
+    @Async(value = "transferSchedulerAsyncExecutor")
     @Transactional(isolation = Isolation.READ_COMMITTED)
     @Scheduled(fixedRate = 100)
     public void processTransferDepositOutBoxMessage() {

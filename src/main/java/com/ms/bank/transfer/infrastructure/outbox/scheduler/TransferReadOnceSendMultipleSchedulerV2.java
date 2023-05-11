@@ -106,7 +106,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    @Scheduled(fixedDelay = 100)
+//    @Scheduled(fixedDelay = 100)
     public void processTransferDepositSuccessResponseOutBoxMessage() {
         List<ExternalTransferDepositSuccessResponseOutBox> outboxList = externalTransferDepositSuccessResponseOutBoxRepository.findAllExternalTransferDepositSuccessResponseOutBoxForUpdate();
         if (outboxList.isEmpty()) {

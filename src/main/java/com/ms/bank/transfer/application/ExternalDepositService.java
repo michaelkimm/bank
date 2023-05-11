@@ -50,9 +50,11 @@ public class ExternalDepositService {
 
 //    @Async
     public void executeTransferDeposit(ExternalDepositRequestDto externalDepositRequestDto) {
-        Account account = accountRepository.findByAccountNumberForUpdate(externalDepositRequestDto.getDepositAccountNumber())
-                .orElseThrow(() -> new RuntimeException("deposit account doesn't exist"));
+//        Account account = accountRepository.findByAccountNumberForUpdate(externalDepositRequestDto.getDepositAccountNumber())
+//                .orElseThrow(() -> new RuntimeException("deposit account doesn't exist"));
 
+        Account account = accountRepository.findById(externalDepositRequestDto.getDepositAccountNumber())
+                .orElseThrow(() -> new RuntimeException("haha"));
 //        log.info("got lock");
 
         BigDecimal depositAmountResult = deposit(externalDepositRequestDto, account);

@@ -64,6 +64,9 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             // is done 추가 필요
             
             if (futureCnt == 0) {
+                outboxList.stream()
+                                .map(this::getTransferHistory)
+                                .forEach(t -> { processTransferDeposit(t); });
                 externalTransferOutBoxRepository.deleteAll(outboxList);
             }
         } catch (Exception e) {
@@ -73,7 +76,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
 
     @Async(value = "transferSchedulerAsyncExecutor")
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    @Scheduled(fixedRate = 100)
+//    @Scheduled(fixedRate = 100)
     public void processTransferDepositOutBoxMessage() {
         List<ExternalTransferDepositOutBox> outboxList = externalTransferDepositOutBoxRepository.findAllExternalTransferDepositOutBoxForUpdate();
         if (outboxList.isEmpty()) {
@@ -108,7 +111,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    @Scheduled(fixedRate = 100)
+//    @Scheduled(fixedRate = 100)
     public void processTransferDepositSuccessResponseOutBoxMessage() {
         List<ExternalTransferDepositSuccessResponseOutBox> outboxList = externalTransferDepositSuccessResponseOutBoxRepository.findAllExternalTransferDepositSuccessResponseOutBoxForUpdate();
         if (outboxList.isEmpty()) {

@@ -4,13 +4,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @NoArgsConstructor
 @Getter
 @Entity
 public class ExternalTransferDepositSuccessResponseOutBox {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private static AtomicInteger atomicInteger = new AtomicInteger();
+
+    @Id
     Long id;
 
     @Lob
@@ -18,6 +21,7 @@ public class ExternalTransferDepositSuccessResponseOutBox {
     String payLoad;
 
     public ExternalTransferDepositSuccessResponseOutBox(String payLoad) {
+        id = Long.valueOf(atomicInteger.getAndIncrement());
         this.payLoad = payLoad;
     }
 }

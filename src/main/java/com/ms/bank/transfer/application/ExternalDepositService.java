@@ -56,8 +56,8 @@ public class ExternalDepositService {
 
         saveTransferHistory(externalDepositRequestDto, depositAmountResult);
 
-        ExternalTransferDepositSuccessResponseOutBox outBox = toExternalTransferDepositSuccessResponseOutBox(externalDepositRequestDto);
-        externalTransferDepositSuccessResponseOutBoxRepository.save(outBox);
+//        ExternalTransferDepositSuccessResponseOutBox outBox = toExternalTransferDepositSuccessResponseOutBox(externalDepositRequestDto);
+//        externalTransferDepositSuccessResponseOutBoxRepository.save(outBox);
     }
 
     public boolean executeSuccessProcess(ExternalDepositRequestDto externalDepositRequestDto) {

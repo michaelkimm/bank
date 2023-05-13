@@ -45,7 +45,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
         if (outboxList.isEmpty()) {
             return;
         }
-        log.info("TransferOutBoxCnt: " + String.valueOf(outboxList.size()));
+        log.info("1 TransferOutBoxCnt: " + String.valueOf(outboxList.size()));
 
         LinkedList<CompletableFuture<Void>> futureLinkedList = new LinkedList<>();
         for (ExternalTransferOutBox outBox : outboxList) {
@@ -64,19 +64,16 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
             // is done 추가 필요
             
             if (futureCnt == 0) {
-                outboxList.stream()
-                                .map(this::getTransferHistory)
-                                .forEach(t -> { processTransferDeposit(t); });
                 externalTransferOutBoxRepository.deleteAll(outboxList);
             }
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
+//        log.info("1 TransferOutBox end");
     }
 
-    @Async(value = "transferSchedulerAsyncExecutor")
     @Transactional(isolation = Isolation.READ_COMMITTED)
-//    @Scheduled(fixedRate = 100)
+    @Scheduled(fixedRate = 100)
     public void processTransferDepositOutBoxMessage() {
         List<ExternalTransferDepositOutBox> outboxList = externalTransferDepositOutBoxRepository.findAllExternalTransferDepositOutBoxForUpdate();
         if (outboxList.isEmpty()) {
@@ -111,13 +108,13 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-//    @Scheduled(fixedRate = 100)
+    @Scheduled(fixedRate = 100)
     public void processTransferDepositSuccessResponseOutBoxMessage() {
         List<ExternalTransferDepositSuccessResponseOutBox> outboxList = externalTransferDepositSuccessResponseOutBoxRepository.findAllExternalTransferDepositSuccessResponseOutBoxForUpdate();
         if (outboxList.isEmpty()) {
             return;
         }
-        log.info("TransferDepositSuccessOutBoxCnt: " + String.valueOf(outboxList.size()));
+        log.info("3 TransferDepositSuccessOutBoxCnt: " + String.valueOf(outboxList.size()));
 
         LinkedList<CompletableFuture<Boolean>> futureLinkedList = new LinkedList<>();
         for (ExternalTransferDepositSuccessResponseOutBox outBox : outboxList) {

@@ -48,19 +48,16 @@ public class ExternalDepositService {
         externalTransferDepositOutBoxRepository.save(outBox);
     }
 
-//    @Async
     public void executeTransferDeposit(ExternalDepositRequestDto externalDepositRequestDto) {
         Account account = accountRepository.findByAccountNumberForUpdate(externalDepositRequestDto.getDepositAccountNumber())
                 .orElseThrow(() -> new RuntimeException("deposit account doesn't exist"));
-
-//        log.info("got lock");
 
         BigDecimal depositAmountResult = deposit(externalDepositRequestDto, account);
 
         saveTransferHistory(externalDepositRequestDto, depositAmountResult);
 
-//        ExternalTransferDepositSuccessResponseOutBox outBox = toExternalTransferDepositSuccessResponseOutBox(externalDepositRequestDto);
-//        externalTransferDepositSuccessResponseOutBoxRepository.save(outBox);
+        ExternalTransferDepositSuccessResponseOutBox outBox = toExternalTransferDepositSuccessResponseOutBox(externalDepositRequestDto);
+        externalTransferDepositSuccessResponseOutBoxRepository.save(outBox);
     }
 
     public boolean executeSuccessProcess(ExternalDepositRequestDto externalDepositRequestDto) {

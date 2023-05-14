@@ -52,6 +52,8 @@ public class ExternalDepositService {
         Account account = accountRepository.findByAccountNumberForUpdate(externalDepositRequestDto.getDepositAccountNumber())
                 .orElseThrow(() -> new RuntimeException("deposit account doesn't exist"));
 
+//        log.info("got lock");
+
         BigDecimal depositAmountResult = deposit(externalDepositRequestDto, account);
 
         saveTransferHistory(externalDepositRequestDto, depositAmountResult);

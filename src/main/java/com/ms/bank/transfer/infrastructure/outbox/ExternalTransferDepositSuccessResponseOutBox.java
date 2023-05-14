@@ -11,9 +11,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Entity
 public class ExternalTransferDepositSuccessResponseOutBox {
 
-    private static AtomicInteger atomicInteger = new AtomicInteger();
+//    private static AtomicInteger atomicInteger = new AtomicInteger();
 
-    @Id
+//    @Id
+    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
 
     @Lob
@@ -21,7 +22,7 @@ public class ExternalTransferDepositSuccessResponseOutBox {
     String payLoad;
 
     public ExternalTransferDepositSuccessResponseOutBox(String payLoad) {
-        id = Long.valueOf(atomicInteger.getAndIncrement());
+//        id = Long.valueOf(atomicInteger.getAndIncrement());
         this.payLoad = payLoad;
     }
 }

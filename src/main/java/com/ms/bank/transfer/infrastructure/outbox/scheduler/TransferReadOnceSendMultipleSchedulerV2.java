@@ -38,7 +38,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     private final ObjectMapper objectMapper;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 100)
     public void processTransferOutBoxMessage() {
 
         List<ExternalTransferOutBox> outboxList = externalTransferOutBoxRepository.findAllExternalTransferOutBoxForUpdate();
@@ -73,7 +73,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 100)
     public void processTransferDepositOutBoxMessage() {
         List<ExternalTransferDepositOutBox> outboxList = externalTransferDepositOutBoxRepository.findAllExternalTransferDepositOutBoxForUpdate();
         if (outboxList.isEmpty()) {
@@ -108,7 +108,7 @@ public class TransferReadOnceSendMultipleSchedulerV2 {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 100)
     public void processTransferDepositSuccessResponseOutBoxMessage() {
         List<ExternalTransferDepositSuccessResponseOutBox> outboxList = externalTransferDepositSuccessResponseOutBoxRepository.findAllExternalTransferDepositSuccessResponseOutBoxForUpdate();
         if (outboxList.isEmpty()) {

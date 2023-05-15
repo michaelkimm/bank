@@ -16,6 +16,7 @@ import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBox;
 import com.ms.bank.transfer.infrastructure.outbox.ExternalTransferOutBoxRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -51,13 +52,13 @@ public class ExternalTransferService {
         BigDecimal amountAfterWithdrawal = withdrawalAccount.getBalance().subtract(transferRequestDto.getTransferAmount());
         withdrawalAccount.setBalance(amountAfterWithdrawal);
 
-        // 이체 내역(시작) 쌓기
-//        TransferHistory transferHistory = toTransferHistory(transferRequestDto, BigDecimal.ONE);
-//        transferHistoryRepository.save(transferHistory);
+//         이체 내역(시작) 쌓기
+        TransferHistory transferHistory = toTransferHistory(transferRequestDto, BigDecimal.ONE);
+        transferHistoryRepository.save(transferHistory);
 
         // 이체 이벤트 쌓기
-//        ExternalTransferOutBox outBox = toExternalTransferOutBox(transferHistory);
-//        externalTransferOutBoxRepository.save(outBox);
+        ExternalTransferOutBox outBox = toExternalTransferOutBox(transferHistory);
+        externalTransferOutBoxRepository.save(outBox);
     }
 
     private boolean checkIfBalanceIsEnough(TransferRequestDto transferRequestDto, Account withdrawalAccount) {

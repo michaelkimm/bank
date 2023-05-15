@@ -20,7 +20,6 @@ public class ExternalTransferDepositSuccessResponseOutBox {
 //    @Id @GeneratedValue(strategy = GenerationType.TABLE, generator = "EXTERNAL_TRANSFER_DEPOSIT_SUCCESS_RESPONSE_OUTBOX_SEQ_GENERATOR")
 private static AtomicInteger atomicInteger = new AtomicInteger();
 
-    //    @Id @GeneratedValue(strategy = GenerationType.TABLE, generator = "EXTERNAL_TRANSFER_OUTBOX_SEQ_GENERATOR")
     @Id
     Long id;
 

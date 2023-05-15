@@ -56,8 +56,8 @@ public class ExternalTransferService {
         transferHistoryRepository.save(transferHistory);
 
         // 이체 이벤트 쌓기
-        ExternalTransferOutBox outBox = toExternalTransferOutBox(transferHistory);
-        externalTransferOutBoxRepository.save(outBox);
+//        ExternalTransferOutBox outBox = toExternalTransferOutBox(transferHistory);
+//        externalTransferOutBoxRepository.save(outBox);
     }
 
     private boolean checkIfBalanceIsEnough(TransferRequestDto transferRequestDto, Account withdrawalAccount) {

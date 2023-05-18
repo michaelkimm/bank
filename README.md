@@ -24,6 +24,11 @@
 
 ![image](https://user-images.githubusercontent.com/50356726/234209917-4c9f0466-c827-4f37-8741-0dd782993bfa.png)
 
+# **🧾ERD**
+
+![image](https://github.com/michaelkimm/bank/assets/50356726/15697425-026d-4195-9865-129df02dcd08)
+
+
 # **🔧사용 기술**
 ## Backend
 - Java11

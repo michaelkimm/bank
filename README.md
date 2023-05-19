@@ -54,3 +54,4 @@ https://excellent-snowshoe-c4c.notion.site/fbb07af7283b4f818204fce604df570a
 - [#4 타행 이체 기능 성능 개선기, 속도(인프라 개선)](https://ujkim-game.tistory.com/93)
 - [#5 타행 이체 기능 성능 개선기, 속도(이체 입금 요청 API 처리 전략)](https://ujkim-game.tistory.com/94)
 - [#6 타행 이체 기능 성능 개선기, 속도(gap lock으로 인한 insert 병목 해결)](https://ujkim-game.tistory.com/96)
+- [#7 비관락 획득 후 외부 API 호출 최소화 → 외부 서비스로 lock 전파 이슈 해결](https://excellent-snowshoe-c4c.notion.site/API-lock-73fd3720aff546f09401a0d4bb5b2eef)

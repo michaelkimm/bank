@@ -11,6 +11,9 @@
 - 이체가 요청될 시, 이체 내역을 적재해야 함.
 - 모든 이체는 고유한 식별 번호에 의해 추적 가능해야 함.
 
+**Notion URL**
+https://excellent-snowshoe-c4c.notion.site/fbb07af7283b4f818204fce604df570a
+
 
 # **🕐성능 개선**
 

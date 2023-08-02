@@ -1,4 +1,5 @@
 # **bank**
+### [노션 기술 문서](https://excellent-snowshoe-c4c.notion.site/fbb07af7283b4f818204fce604df570a)
 **개요**
 
 은행의 돈통(계좌) 및 이체 시스템 구현. 기능 구현 시, 사용자의 편의와 성능에 중점.
@@ -11,12 +12,9 @@
 - 이체가 요청될 시, 이체 내역을 적재해야 함.
 - 모든 이체는 고유한 식별 번호에 의해 추적 가능해야 함.
 
-**Notion URL**
-https://excellent-snowshoe-c4c.notion.site/fbb07af7283b4f818204fce604df570a
-
 
 # **🕐성능 개선**
-
+### [문제 & 성능 테스트 기록](https://excellent-snowshoe-c4c.notion.site/Bank-e3d0c72454114e6fa804287ec1a3e4a7?pvs=4)
 ![이체 완료 소요 시간 성능 개선 그래프](https://user-images.githubusercontent.com/50356726/230307410-4bdad169-7e3d-447d-90f7-d126ab149f50.png)
 
 ![TPS 성능 개선 그래프](https://user-images.githubusercontent.com/50356726/230307465-d8bdaa23-fc93-4446-965d-0739ba7f68bc.png)
@@ -28,7 +26,7 @@ https://excellent-snowshoe-c4c.notion.site/fbb07af7283b4f818204fce604df570a
 ![image](https://user-images.githubusercontent.com/50356726/234209917-4c9f0466-c827-4f37-8741-0dd782993bfa.png)
 
 # **🧾ERD**
-
+### [데이터 모델 도출 과정](https://excellent-snowshoe-c4c.notion.site/fe23d902981e4aee8ae6d14110136875?pvs=4)
 ![image](https://github.com/michaelkimm/bank/assets/50356726/15697425-026d-4195-9865-129df02dcd08)
 
 

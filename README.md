@@ -53,3 +53,13 @@
 - [#5 타행 이체 기능 성능 개선기, 속도(이체 입금 요청 API 처리 전략)](https://ujkim-game.tistory.com/94)
 - [#6 타행 이체 기능 성능 개선기, 속도(gap lock으로 인한 insert 병목 해결)](https://ujkim-game.tistory.com/96)
 - [#7 비관락 획득 후 외부 API 호출 최소화](https://excellent-snowshoe-c4c.notion.site/API-lock-73fd3720aff546f09401a0d4bb5b2eef)
+
+# ❓QnA
+[답변 정리 링크](https://excellent-snowshoe-c4c.notion.site/fbb07af7283b4f818204fce604df570a?pvs=4)
+1. 왜 이벤트 데이터를 DB에 저장했는가?
+2. 이벤트 데이터를 MQ에 발행하지 않은 이유?
+3. 이벤트 처리에 대한 요청에 대한 응답이 200이 아니면, 어떻게 처리할 것인가?
+4. 왜 두개의 은행을 띄워서 성능 테스트를 실행했나?
+5. 분산 트랜잭션의 최종 일관성을 확인할 수 있는 더 좋은 테스트 환경이 있을까?
+6. Double request 문제(따닥 문제) 해결할 방법은?
+7. 현재 구조에서 더 개선하고 싶은 점은? 

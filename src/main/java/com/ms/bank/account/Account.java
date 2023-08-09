@@ -25,4 +25,15 @@ public class Account {
     private Member owner;
 
     protected Account() {}
+
+    public void deposit(BigDecimal balance) {
+        balance.add(balance);
+    }
+
+    public void withdraw(BigDecimal balance) {
+        if (this.balance.compareTo(balance) == -1) {
+            throw new IllegalArgumentException("잔액 부족");
+        }
+        balance.subtract(balance);
+    }
 }
